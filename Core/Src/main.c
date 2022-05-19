@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stdio_redirection.h"
 #include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -66,7 +67,7 @@ static void MX_USART3_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+    redirectStdio(&huart3);     //redirect std i/o to console UART
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -90,7 +91,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-
+  printf("\r\nWristbreaker v1.0\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
