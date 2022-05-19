@@ -18,12 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stdio_redirection.h"
 #include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "main_loop_api.h"
+#include "stdio_redirection.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +67,7 @@ static void MX_USART3_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-    redirectStdio(&huart3);     //redirect std i/o to console UART
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -91,18 +91,20 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  printf("\r\nWristbreaker v1.0\r\n");
+  redirectStdio(&huart3);     //redirect stdio to console UART
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  mainLoop();   //it never returns fron this function
+
   while (1)
   {
+      //this while loop should never be entered!
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-      HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
-      HAL_Delay(250);
+
   }
   /* USER CODE END 3 */
 }
