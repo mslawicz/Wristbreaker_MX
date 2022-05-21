@@ -8,11 +8,14 @@
 #include "main.h"
 #include "main_loop_api.h"
 #include "main_loop.h"
+#include "timer.h"
 #include <iostream>
 
 void mainLoop()
 {
     std::cout << "\r\nWristbreaker v1.0\r\n";
+
+    Timer::start(pTimerHtim);
 
     while(true)
     {
