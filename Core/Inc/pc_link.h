@@ -10,11 +10,12 @@
 
 #include "stm32f4xx_hal.h"
 
+#define GAME_CONTROLLER_TEST
+
 constexpr size_t SimDataSize = 63;
 
 struct GameControllerDataType
 {
-    uint8_t reportID;
     int16_t X;
     int16_t Y;
     int16_t Z;
@@ -33,6 +34,16 @@ struct SimDataType
     uint8_t data[SimDataSize];
 };
 
-
+class GameController
+{
+public:
+    void sendReport();
+    GameControllerDataType data;
+    static constexpr uint32_t ReportInterval = 10000U;    //game controller report sending interval
+private:
+    void setTestData();
+    const uint8_t _ReportID = 1;
+    uint8_t _testCounter{0};
+};
 
 #endif /* INC_PC_LINK_H_ */
