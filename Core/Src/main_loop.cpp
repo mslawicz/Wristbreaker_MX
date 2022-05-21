@@ -13,13 +13,17 @@
 
 void mainLoop()
 {
+    Timer ledTimer;
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);
 
     while(true)
     {
-        HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
-        HAL_Delay(250);
+        if(ledTimer.hasElapsed(250000))
+        {
+            HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
+            ledTimer.reset();
+        }
     }
 }

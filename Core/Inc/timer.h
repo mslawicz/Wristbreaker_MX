@@ -10,12 +10,17 @@
 
 #include "stm32f4xx_hal.h"
 
+/* timer for counting time with 1 us resolution */
 class Timer
 {
 public:
     static void start(TIM_HandleTypeDef* pHtim);
+    void reset();
+    uint32_t getElapsedTime() const;
+    bool hasElapsed(uint32_t time) const;
 private:
-    static TIM_HandleTypeDef* _pHtim;
+    inline static TIM_HandleTypeDef* _pHtim;
+    uint32_t _refCntVal;    //reference counter value
 };
 
 
