@@ -10,13 +10,15 @@
 #include "main_loop.h"
 #include "timer.h"
 #include "pc_link.h"
+#include "haptic.h"
 #include <iostream>
 
 void mainLoop()
 {
-    Timer ledTimer;
+    Timer statusLedTimer;
     Timer gameCtrlTimer;
-    GameController gameController;
+    GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
+    HapticDevice aileronCtrl;   //aileron control haptic device
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);
@@ -24,10 +26,12 @@ void mainLoop()
     /* main forever loop */
     while(true)
     {
-        if(ledTimer.hasElapsed(250000))
+        aileronCtrl.handler();
+
+        if(statusLedTimer.hasElapsed(500000))
         {
-            HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
-            ledTimer.reset();
+            HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+            statusLedTimer.reset();
         }
 
         if(gameCtrlTimer.hasElapsed(GameController::ReportInterval))
