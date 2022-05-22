@@ -11,6 +11,8 @@
 #include "stm32f4xx_hal.h"
 
 extern TIM_HandleTypeDef* pTimerHtim;  //pointer to htim object instance used by Timer class
+extern ADC_HandleTypeDef* pHadc;    //pointer to ADC object
+extern uint16_t adcConvBuffer[16]; //buffer for ADC conversion results
 
 #ifdef __cplusplus
 extern "C"

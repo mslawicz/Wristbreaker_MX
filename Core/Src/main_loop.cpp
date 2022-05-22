@@ -14,6 +14,8 @@
 #include "convert.h"
 #include <iostream>
 
+ADC_HandleTypeDef* pHadc;    //pointer to ADC object
+uint16_t adcConvBuffer[16]; //buffer for ADC conversion results
 
 void mainLoop()
 {
@@ -35,6 +37,9 @@ void mainLoop()
         throttleCtrl.handler();
         gameController.data.slider = scale<uint16_t, uint16_t>(0, 0xFFFF, throttleCtrl.getPosition(), 0, MAX_15_BIT);
 
+        /* request next conversions of analog channels */
+        HAL_ADC_Start_DMA(pHadc, (uint32_t*)adcConvBuffer, pHadc->Init.NbrOfConversion);
+
         if(statusLedTimer.hasElapsed(500000))
         {
             HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
@@ -48,3 +53,4 @@ void mainLoop()
         }
     }
 }
+
