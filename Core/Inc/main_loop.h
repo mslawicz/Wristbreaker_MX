@@ -10,6 +10,6 @@
 
 #include "stm32f4xx_hal.h"
 
-
+#define MAX_15_BIT  0x7FFF
 
 #endif /* INC_MAIN_LOOP_H_ */
