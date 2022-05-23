@@ -23,7 +23,6 @@ void mainLoop()
     Timer gameCtrlTimer;
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
     HapticDevice aileronCtrl(nullptr);   //aileron control haptic device
-    HapticDevice throttleCtrl(nullptr);  //throttle control haptic device
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);
@@ -31,11 +30,32 @@ void mainLoop()
     /* main forever loop */
     while(true)
     {
+        /* aileron control */
         aileronCtrl.handler();
-        gameController.data.X = scale<uint16_t, int16_t>(0, 0xFFFF, aileronCtrl.getPosition(), -MAX_15_BIT, MAX_15_BIT);
+        gameController.data.X = scale<uint16_t, int16_t>(0, MAX_16_BIT, aileronCtrl.getPosition(), -MAX_15_BIT, MAX_15_BIT);
 
-        throttleCtrl.handler();
-        gameController.data.slider = scale<uint16_t, uint16_t>(0, 0xFFFF, throttleCtrl.getPosition(), 0, MAX_15_BIT);
+        /* elevator control */
+        //elevatorCtrl.handler();
+        gameController.data.Y = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*elevatorCtrl.getPosition()*/, -MAX_15_BIT, MAX_15_BIT);
+
+        /* rudder control */
+        //rudderCtrl.handler();
+        gameController.data.Rz = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*elevatorCtrl.getPosition()*/, -MAX_15_BIT, MAX_15_BIT);
+
+        /* throttle control */
+        gameController.data.slider = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[0], 0, MAX_15_BIT);
+
+        /* propeller control */
+        gameController.data.dial = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[1], 0, MAX_15_BIT);
+
+        /* mixture control */
+        gameController.data.Z = scale<uint16_t, int16_t>(0, MAX_12_BIT, adcConvBuffer[2], -MAX_15_BIT, MAX_15_BIT);
+
+        /* left brake control */
+        gameController.data.Rx = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[3], 0, MAX_15_BIT);
+
+        /* right brake control */
+        gameController.data.Ry = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[4], 0, MAX_15_BIT);
 
         /* request next conversions of analog channels */
         HAL_ADC_Start_DMA(pHadc, (uint32_t*)adcConvBuffer, pHadc->Init.NbrOfConversion);

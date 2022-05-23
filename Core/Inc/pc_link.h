@@ -10,7 +10,7 @@
 
 #include "stm32f4xx_hal.h"
 
-#define GAME_CONTROLLER_TEST
+//#define GAME_CONTROLLER_TEST
 
 constexpr size_t SimDataSize = 63;
 
