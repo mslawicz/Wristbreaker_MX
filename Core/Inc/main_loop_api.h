@@ -13,6 +13,7 @@
 extern TIM_HandleTypeDef* pTimerHtim;  //pointer to htim object instance used by Timer class
 extern ADC_HandleTypeDef* pHadc;    //pointer to ADC object
 extern uint16_t adcConvBuffer[16]; //buffer for ADC conversion results
+extern SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
 
 #ifdef __cplusplus
 extern "C"

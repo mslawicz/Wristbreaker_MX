@@ -17,6 +17,11 @@
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
 uint16_t adcConvBuffer[16]; //buffer for ADC conversion results
 
+SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus XXX here?
+
+bool spiFree = true; //XXX test
+uint16_t angle; //XXX test
+
 void mainLoop()
 {
     Timer statusLedTimer;
@@ -70,6 +75,21 @@ void mainLoop()
         {
             gameController.sendReport();
             gameCtrlTimer.reset();
+        }
+
+        //XXX test of SPI
+        if(spiFree)
+        {
+            uint16_t wrBuf = 0xFFFF;
+            uint16_t rdBuf;
+            HAL_GPIO_WritePin(SPI4_CS0_GPIO_Port, SPI4_CS0_Pin, GPIO_PinState::GPIO_PIN_RESET);
+            HAL_SPI_TransmitReceive(pPosSensSpi, (uint8_t*)&wrBuf, (uint8_t*)&rdBuf, 1, 10);
+            HAL_GPIO_WritePin(SPI4_CS0_GPIO_Port, SPI4_CS0_Pin, GPIO_PinState::GPIO_PIN_SET);
+            angle = rdBuf & 0x3FFF;
+            HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PinState::GPIO_PIN_RESET);
+            HAL_SPI_TransmitReceive(pPosSensSpi, (uint8_t*)&wrBuf, (uint8_t*)&rdBuf, 1, 10);
+            HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PinState::GPIO_PIN_SET);
+            spiFree = true;
         }
     }
 }
