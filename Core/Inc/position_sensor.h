@@ -14,7 +14,7 @@
 class PositionSensor
 {
 public:
-    uint16_t getPosition() { return 0; }
+    virtual uint16_t getPosition() { return 0; }
 };
 
 

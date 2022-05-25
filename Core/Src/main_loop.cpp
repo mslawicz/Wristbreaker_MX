@@ -12,22 +12,21 @@
 #include "pc_link.h"
 #include "haptic.h"
 #include "convert.h"
+#include "AS5048A.h"
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
 uint16_t adcConvBuffer[16]; //buffer for ADC conversion results
 
-SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus XXX here?
+SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
 
-bool spiFree = true; //XXX test
-uint16_t angle; //XXX test
 
 void mainLoop()
 {
     Timer statusLedTimer;
     Timer gameCtrlTimer;
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
-    HapticDevice aileronCtrl(nullptr);   //aileron control haptic device
+    HapticDevice aileronCtrl(new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);
@@ -37,7 +36,8 @@ void mainLoop()
     {
         /* aileron control */
         aileronCtrl.handler();
-        gameController.data.X = scale<uint16_t, int16_t>(0, MAX_16_BIT, aileronCtrl.getPosition(), -MAX_15_BIT, MAX_15_BIT);
+        uint16_t aileronPosition = aileronCtrl.getPosition();
+        gameController.data.X = scale<uint16_t, int16_t>(0, MAX_16_BIT, aileronPosition, -MAX_15_BIT, MAX_15_BIT);
 
         /* elevator control */
         //elevatorCtrl.handler();
@@ -75,21 +75,6 @@ void mainLoop()
         {
             gameController.sendReport();
             gameCtrlTimer.reset();
-        }
-
-        //XXX test of SPI
-        if(spiFree)
-        {
-            uint16_t wrBuf = 0xFFFF;
-            uint16_t rdBuf;
-            HAL_GPIO_WritePin(SPI4_CS0_GPIO_Port, SPI4_CS0_Pin, GPIO_PinState::GPIO_PIN_RESET);
-            HAL_SPI_TransmitReceive(pPosSensSpi, (uint8_t*)&wrBuf, (uint8_t*)&rdBuf, 1, 10);
-            HAL_GPIO_WritePin(SPI4_CS0_GPIO_Port, SPI4_CS0_Pin, GPIO_PinState::GPIO_PIN_SET);
-            angle = rdBuf & 0x3FFF;
-            HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PinState::GPIO_PIN_RESET);
-            HAL_SPI_TransmitReceive(pPosSensSpi, (uint8_t*)&wrBuf, (uint8_t*)&rdBuf, 1, 10);
-            HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PinState::GPIO_PIN_SET);
-            spiFree = true;
         }
     }
 }

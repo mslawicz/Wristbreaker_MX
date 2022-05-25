@@ -59,8 +59,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define CUSTOM_HID_EPIN_SIZE 64
 #define CUSTOM_HID_EPOUT_SIZE 64
-#define SPI4_CS0_Pin GPIO_PIN_4
-#define SPI4_CS0_GPIO_Port GPIOE
+#define ENC1_CS_Pin GPIO_PIN_4
+#define ENC1_CS_GPIO_Port GPIOE
 #define USER_Btn_Pin GPIO_PIN_13
 #define USER_Btn_GPIO_Port GPIOC
 #define MCO_Pin GPIO_PIN_0
