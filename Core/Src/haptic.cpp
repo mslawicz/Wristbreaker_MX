@@ -7,8 +7,9 @@
 
 #include "haptic.h"
 
-HapticDevice::HapticDevice(PositionSensor* positionSensor) :
-    _pPositionSensor(positionSensor)
+HapticDevice::HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor) :
+    _pActuator(pActuator),
+    _pPositionSensor(pPositionSensor)
 {
 
 }

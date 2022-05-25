@@ -9,6 +9,7 @@
 #define INC_HAPTIC_H_
 
 #include "stm32f4xx_hal.h"
+#include "actuator.h"
 #include "position_sensor.h"
 
 /*
@@ -19,10 +20,11 @@
 class HapticDevice
 {
 public:
-    HapticDevice(PositionSensor* positionSensor);
+    HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor);
     void handler();
     uint16_t getPosition();
 private:
+    Actuator* _pActuator{nullptr};
     PositionSensor* _pPositionSensor{nullptr};
 };
 
