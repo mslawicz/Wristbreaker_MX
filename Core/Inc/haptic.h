@@ -13,6 +13,16 @@
 #include "position_sensor.h"
 
 /*
+ * structure of haptic device parameters
+ */
+struct HapticParam
+{
+    uint16_t midPosition;
+    int16_t referencePosition{0};
+    int16_t currentPosition{0};
+};
+
+/*
  * class of a haptic device
  * this device consists of an actuator and position sensor
  * the object handler() function should be called periodically (as frequent as possible)
@@ -22,7 +32,7 @@ class HapticDevice
 public:
     HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor);
     void handler();
-    uint16_t getPosition();
+    HapticParam _param;
 private:
     Actuator* _pActuator{nullptr};
     PositionSensor* _pPositionSensor{nullptr};
