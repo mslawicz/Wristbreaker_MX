@@ -13,6 +13,7 @@
 #include "haptic.h"
 #include "convert.h"
 #include "AS5048A.h"
+#include "motor_BLDC.h"
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -26,7 +27,7 @@ void mainLoop()
     Timer statusLedTimer;
     Timer gameCtrlTimer;
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
-    HapticDevice aileronCtrl(nullptr, new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
+    HapticDevice aileronCtrl(new MotorBLDC, new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
     aileronCtrl.param.midPosition = 55000; //XXX test
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
