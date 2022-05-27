@@ -7,4 +7,12 @@
 
 #include "actuator.h"
 
+void Actuator::initialize()
+{
 
+}
+
+bool Actuator::calibrate()
+{
+    return true;
+}

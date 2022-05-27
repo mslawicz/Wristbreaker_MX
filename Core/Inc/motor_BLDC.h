@@ -9,10 +9,14 @@
 #define INC_MOTOR_BLDC_H_
 
 #include "actuator.h"
+#include "stm32f4xx_hal.h"
 
 class MotorBLDC : public Actuator
 {
-
+protected:
+    uint8_t _polePairs;
+private:
+    void setFieldVector(int32_t angle, uint16_t magnitude);
 };
 
 
