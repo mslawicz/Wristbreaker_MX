@@ -19,7 +19,7 @@ void HapticDevice::handler()
     int32_t currentPosition{0};
     if(nullptr != _pPositionSensor)
     {
-        currentPosition = _pPositionSensor->getPosition() - _param.midPosition;
+        currentPosition = _pPositionSensor->getPosition() - param.midPosition;
     }
 
     if(currentPosition > 0x7FFF)
@@ -34,7 +34,8 @@ void HapticDevice::handler()
     {
         currentPosition = -0x7FFF;
     }
+    // currentPosition in the range <-32767,32767> relative to midPosition
 
-    _param.currentPosition = static_cast<int16_t>(currentPosition);
+    param.currentPosition = static_cast<int16_t>(currentPosition);
 }
 

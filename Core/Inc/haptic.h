@@ -32,7 +32,7 @@ class HapticDevice
 public:
     HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor);
     void handler();
-    HapticParam _param;
+    HapticParam param;
 private:
     Actuator* _pActuator{nullptr};
     PositionSensor* _pPositionSensor{nullptr};

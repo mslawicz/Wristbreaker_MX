@@ -27,7 +27,7 @@ void mainLoop()
     Timer gameCtrlTimer;
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
     HapticDevice aileronCtrl(nullptr, new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
-    aileronCtrl._param.midPosition = 55000; //XXX test
+    aileronCtrl.param.midPosition = 55000; //XXX test
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);
@@ -37,15 +37,15 @@ void mainLoop()
     {
         /* aileron control */
         aileronCtrl.handler();
-        gameController.data.X = aileronCtrl._param.currentPosition;
+        gameController.data.X = aileronCtrl.param.currentPosition;
 
         /* elevator control */
         //elevatorCtrl.handler();
-        gameController.data.Y = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*elevatorCtrl.getPosition()*/, -MAX_15_BIT, MAX_15_BIT);
+        gameController.data.Y = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*elevatorCtrl.param.currentPosition*/, -MAX_15_BIT, MAX_15_BIT);
 
         /* rudder control */
         //rudderCtrl.handler();
-        gameController.data.Rz = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*elevatorCtrl.getPosition()*/, -MAX_15_BIT, MAX_15_BIT);
+        gameController.data.Rz = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*rudderCtrl.param.currentPosition*/, -MAX_15_BIT, MAX_15_BIT);
 
         /* throttle control */
         gameController.data.slider = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[0], 0, MAX_15_BIT);
