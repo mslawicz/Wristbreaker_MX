@@ -17,9 +17,9 @@
  */
 struct HapticParam
 {
-    uint16_t midPosition;
-    int16_t referencePosition{0};
-    int16_t currentPosition{0};
+    float midPosition;
+    float referencePosition{0};
+    float currentPosition{0};
 };
 
 /*

@@ -14,12 +14,12 @@ class AS5048A : public PositionSensor
 {
 public:
     AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin);
-    uint16_t getPosition() override;
+    float getPosition() override;
 private:
     SPI_HandleTypeDef* _pSpi;
     GPIO_TypeDef* _csPort;
     uint16_t _csPin;
-    uint16_t _lastValidValue{0};
+    float _lastValidValue{0};
 };
 
 

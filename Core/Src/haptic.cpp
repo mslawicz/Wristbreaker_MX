@@ -16,27 +16,23 @@ HapticDevice::HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor)
 
 void HapticDevice::handler()
 {
-    int32_t currentPosition{0};
+    float currentPosition{0};
     if(nullptr != _pPositionSensor)
     {
         currentPosition = _pPositionSensor->getPosition() - param.midPosition;
     }
 
-    if(currentPosition > 0x7FFF)
+    if(currentPosition > 0.5F)
     {
-        currentPosition -= 0x10000;
+        currentPosition -= 1.0F;
     }
-    else if(currentPosition < -0x8000)
+    else if(currentPosition < -0.5F)
     {
-        currentPosition += 0x10000;
+        currentPosition += 1.0F;
     }
-    else if(currentPosition == -0x8000)
-    {
-        currentPosition = -0x7FFF;
-    }
-    // currentPosition in the range <-32767,32767> relative to midPosition
+    // currentPosition in the range <-0.5,0.5> relative to midPosition
 
-    param.currentPosition = static_cast<int16_t>(currentPosition);
+    param.currentPosition = currentPosition;
 
     //XXX test
     TIM1->CCR1 = 100;

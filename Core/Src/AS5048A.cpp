@@ -15,8 +15,9 @@ AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin) 
 
 }
 
-uint16_t AS5048A::getPosition()
+float AS5048A::getPosition()
 {
+    constexpr float Max14Bit = 0x3FFF;
     uint16_t wrBuf = 0xFFFF;
     uint16_t rdBuf;
     HAL_GPIO_WritePin(_csPort, _csPin, GPIO_PinState::GPIO_PIN_RESET);
@@ -31,7 +32,7 @@ uint16_t AS5048A::getPosition()
         parity ^= (parity >> 1);
         if(0 == (parity & 1))
         {
-            _lastValidValue = rdBuf << 2;
+            _lastValidValue = (rdBuf & 0x3FFF) / Max14Bit;
         }
     }
     return _lastValidValue;
