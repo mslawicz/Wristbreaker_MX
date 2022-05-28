@@ -37,5 +37,10 @@ void HapticDevice::handler()
     // currentPosition in the range <-32767,32767> relative to midPosition
 
     param.currentPosition = static_cast<int16_t>(currentPosition);
+
+    //XXX test
+    TIM1->CCR1 = 100;
+    TIM1->CCR2 = 50;
+    TIM1->CCR3 = 20;
 }
 
