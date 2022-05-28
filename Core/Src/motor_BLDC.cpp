@@ -6,10 +6,12 @@
  */
 
 #include "motor_BLDC.h"
+#include "convert.h"
 #include <math.h>
 
-MotorBLDC::MotorBLDC(uint8_t polePairs) :
-    _polePairs(polePairs)
+MotorBLDC::MotorBLDC(uint8_t polePairs, TIM_HandleTypeDef* pPwmHtim) :
+    _polePairs(polePairs),
+    _pPwmHtim(pPwmHtim)
 {
 
 }
@@ -21,11 +23,14 @@ MotorBLDC::MotorBLDC(uint8_t polePairs) :
  */
 void MotorBLDC::setFieldVector(float angle, float magnitude)
 {
-    //int32_t pwmA = magnitude * getSVMvalue(angle);
-    //int32_t pwmB = magnitude * getSVMvalue(angle + 12000);
-    //int32_t pwmC = magnitude * getSVMvalue(angle + 24000);
+    float pwmA = magnitude * getSvmValue(angle);
+    float pwmB = magnitude * getSvmValue(angle + OneThirdCycle);
+    float pwmC = magnitude * getSvmValue(angle - OneThirdCycle);
 
     //set PWM waves
+    _pPwmHtim->Instance->CCR1 = scale<float, uint16_t>(0, 1.0F, pwmA, 0, _pPwmHtim->Init.Period);
+    _pPwmHtim->Instance->CCR2 = scale<float, uint16_t>(0, 1.0F, pwmB, 0, _pPwmHtim->Init.Period);
+    _pPwmHtim->Instance->CCR3 = scale<float, uint16_t>(0, 1.0F, pwmC, 0, _pPwmHtim->Init.Period);
 }
 
 // returns space vector modulation value

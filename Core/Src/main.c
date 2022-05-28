@@ -81,6 +81,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
     pTimerHtim = &htim5;    //htim5 used by Timer class
+    pMotor1Htim = &htim1;  //pointer to htim object instance used by motor #1
     pHadc = &hadc1;     //pointer to hadc1, which will be used in another module
     pPosSensSpi = &hspi4;
   /* USER CODE END 1 */

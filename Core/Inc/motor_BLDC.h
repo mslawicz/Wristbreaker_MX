@@ -10,17 +10,17 @@
 
 #include "stm32f4xx_hal.h"
 #include "actuator.h"
-#include "convert.h"
 #include <array>
 
 class MotorBLDC : public Actuator
 {
 public:
-    MotorBLDC(uint8_t polePairs);
+    MotorBLDC(uint8_t polePairs, TIM_HandleTypeDef* pPwmHtim);
 private:
     void setFieldVector(float angle, float magnitude);
     float getSvmValue(float argument);
     uint8_t _polePairs;
+    TIM_HandleTypeDef* _pPwmHtim;   //pointer to PWM timer handle for this motor
     static constexpr size_t LutSize = 91;
     //Space Vector Modulation Look Up Table for angles 0-90 degrees
     static constexpr std::array<float, LutSize> SvmLUT

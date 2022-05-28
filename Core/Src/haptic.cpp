@@ -33,10 +33,5 @@ void HapticDevice::handler()
     // currentPosition in the range <-0.5,0.5> relative to midPosition
 
     param.currentPosition = currentPosition;
-
-    //XXX test
-    TIM1->CCR1 = 1200;
-    TIM1->CCR2 = 600;
-    TIM1->CCR3 = 1800;
 }
 

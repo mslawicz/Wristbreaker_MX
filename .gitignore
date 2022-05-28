@@ -2,3 +2,4 @@
 Drivers
 /STM32F413ZHTX_FLASH.ld
 /STM32F413ZHTX_RAM.ld
+/Wristbreaker Debug.launch

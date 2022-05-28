@@ -18,6 +18,7 @@
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
 uint16_t adcConvBuffer[16]; //buffer for ADC conversion results
+TIM_HandleTypeDef* pMotor1Htim;  //pointer to htim object instance used by motor #1
 
 SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
 
@@ -27,7 +28,7 @@ void mainLoop()
     Timer statusLedTimer;
     Timer gameCtrlTimer;
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
-    HapticDevice aileronCtrl(new MotorBLDC(11), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
+    HapticDevice aileronCtrl(new MotorBLDC(11, pMotor1Htim), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
     aileronCtrl.param.midPosition = 0.87F; //XXX test
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
