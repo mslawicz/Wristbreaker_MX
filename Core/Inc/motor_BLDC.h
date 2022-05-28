@@ -13,10 +13,11 @@
 
 class MotorBLDC : public Actuator
 {
-protected:
-    uint8_t _polePairs;
+public:
+    MotorBLDC(uint8_t polePairs);
 private:
     void setFieldVector(int32_t angle, uint16_t magnitude);
+    uint8_t _polePairs;
 };
 
 

@@ -8,6 +8,12 @@
 #include "motor_BLDC.h"
 #include "SVM_lut.h"
 
+MotorBLDC::MotorBLDC(uint8_t polePairs) :
+    _polePairs(polePairs)
+{
+
+}
+
 /*
  * set magnetic field vector of a BLDC motor
  * angle in degrees * 100
