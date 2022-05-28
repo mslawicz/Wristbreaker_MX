@@ -28,9 +28,10 @@ void MotorBLDC::setFieldVector(float angle, float magnitude)
     float pwmC = magnitude * getSvmValue(angle - OneThirdCycle);
 
     //set PWM waves
-    _pPwmHtim->Instance->CCR1 = scale<float, uint16_t>(0, 1.0F, pwmA, 0, _pPwmHtim->Init.Period);
-    _pPwmHtim->Instance->CCR2 = scale<float, uint16_t>(0, 1.0F, pwmB, 0, _pPwmHtim->Init.Period);
-    _pPwmHtim->Instance->CCR3 = scale<float, uint16_t>(0, 1.0F, pwmC, 0, _pPwmHtim->Init.Period);
+    _pPwmHtim->Instance->CCR1 = scale<float, uint16_t>(-1.0F, 1.0F, pwmA, 0, _pPwmHtim->Init.Period);
+    _pPwmHtim->Instance->CCR2 = scale<float, uint16_t>(-1.0F, 1.0F, pwmB, 0, _pPwmHtim->Init.Period);
+    _pPwmHtim->Instance->CCR3 = scale<float, uint16_t>(-1.0F, 1.0F, pwmC, 0, _pPwmHtim->Init.Period);
+    __NOP();    //XXX test
 }
 
 // returns space vector modulation value
