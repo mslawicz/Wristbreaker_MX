@@ -35,8 +35,8 @@ void HapticDevice::handler()
     param.currentPosition = currentPosition;
 
     //XXX test
-    TIM1->CCR1 = 100;
-    TIM1->CCR2 = 50;
-    TIM1->CCR3 = 20;
+    TIM1->CCR1 = 1200;
+    TIM1->CCR2 = 600;
+    TIM1->CCR3 = 1800;
 }
 
