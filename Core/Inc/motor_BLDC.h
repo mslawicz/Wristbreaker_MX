@@ -18,7 +18,7 @@ public:
     MotorBLDC(uint8_t polePairs, TIM_HandleTypeDef* pPwmHtim);
     ~MotorBLDC() {}
     void initialize() override;
-    bool calibrate() override;
+    bool calibrate(ActuatorParam& parameters) override;
     void action() override;
 private:
     void setFieldVector(float angle, float magnitude);

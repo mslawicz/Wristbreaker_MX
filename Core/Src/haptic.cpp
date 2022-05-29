@@ -48,7 +48,7 @@ void HapticDevice::handler()
     case HapticState::Calibration:
         if(nullptr != _pActuator)
         {
-            if(_pActuator->calibrate())
+            if(_pActuator->calibrate(param.actuatorParam))
             {
                 _state = HapticState::Action;
             }

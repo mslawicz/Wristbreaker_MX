@@ -12,7 +12,7 @@ void Actuator::initialize()
 
 }
 
-bool Actuator::calibrate()
+bool Actuator::calibrate(ActuatorParam& parameters)
 {
     return true;
 }

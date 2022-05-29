@@ -76,10 +76,23 @@ void MotorBLDC::initialize()
 {
     _phase = 0;
     _magnitude = 0;
+    callTimer.reset();
 }
 
-bool MotorBLDC::calibrate()
+bool MotorBLDC::calibrate(ActuatorParam& parameters)
 {
+    float dMag = parameters.calMagnitude * 1e-6 * callTimer.getElapsedTime();     //magnitude being increased during the first second
+
+    setFieldVector(_phase, _magnitude);
+
+    _phase += parameters.calSpeed * callTimer.getElapsedTime();
+    _magnitude += dMag;
+    if(_magnitude > parameters.calMagnitude)
+    {
+        _magnitude = parameters.calMagnitude;
+    }
+
+    callTimer.reset();
     return false;
 }
 
