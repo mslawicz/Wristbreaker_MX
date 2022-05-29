@@ -16,6 +16,9 @@ class MotorBLDC : public Actuator
 {
 public:
     MotorBLDC(uint8_t polePairs, TIM_HandleTypeDef* pPwmHtim);
+    void initialize() override;
+    bool calibrate() override;
+    void action() override;
 private:
     void setFieldVector(float angle, float magnitude);
     float getSvmValue(float argument);

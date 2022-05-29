@@ -16,3 +16,8 @@ bool Actuator::calibrate()
 {
     return true;
 }
+
+void Actuator::action()
+{
+
+}

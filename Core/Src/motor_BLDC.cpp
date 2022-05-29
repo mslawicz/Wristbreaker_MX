@@ -71,3 +71,18 @@ float MotorBLDC::getSvmValue(float argument)
 
     return sign * (SvmLUT[lowerIndex] + (argument - static_cast<float>(lowerIndex))* (SvmLUT[lowerIndex + 1] - SvmLUT[lowerIndex])); //NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
 }
+
+void MotorBLDC::initialize()
+{
+
+}
+
+bool MotorBLDC::calibrate()
+{
+    return false;
+}
+
+void MotorBLDC::action()
+{
+
+}

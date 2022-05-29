@@ -37,12 +37,25 @@ void HapticDevice::handler()
     switch(_state)
     {
     case HapticState::Start:
+        if(nullptr != _pActuator)
+        {
+            _pActuator->initialize();
+        }
+        _state = HapticState::Calibration;
         break;
 
     case HapticState::Calibration:
+        if(nullptr != _pActuator)
+        {
+            if(_pActuator->calibrate())
+            {
+                _state = HapticState::Action;
+            }
+        }
         break;
 
     case HapticState::Action:
+
         break;
 
     default:

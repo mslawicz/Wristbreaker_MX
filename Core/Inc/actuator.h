@@ -14,6 +14,7 @@ class Actuator
 public:
     virtual void initialize();
     virtual bool calibrate();
+    virtual void action();
 };
 
 
