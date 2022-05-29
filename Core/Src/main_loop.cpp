@@ -29,7 +29,7 @@ void mainLoop()
     Timer gameCtrlTimer;
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
     HapticDevice aileronCtrl(new MotorBLDC(11, pMotor1Htim), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
-    aileronCtrl.param.midPosition = 0.87F; //XXX test
+    aileronCtrl.param.midPosition = 0.87F;
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);

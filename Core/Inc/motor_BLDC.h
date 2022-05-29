@@ -16,7 +16,6 @@ class MotorBLDC : public Actuator
 {
 public:
     MotorBLDC(uint8_t polePairs, TIM_HandleTypeDef* pPwmHtim);
-    void test(float angle) override { setFieldVector(angle, 1.0F); } //XXX test
 private:
     void setFieldVector(float angle, float magnitude);
     float getSvmValue(float argument);

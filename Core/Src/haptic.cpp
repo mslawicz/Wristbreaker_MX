@@ -33,8 +33,5 @@ void HapticDevice::handler()
     // currentPosition in the range <-0.5,0.5> relative to midPosition
 
     param.currentPosition = currentPosition;
-
-    //XXX setFieldVector test
-    _pActuator->test(currentPosition * 360.0F);
 }
 
