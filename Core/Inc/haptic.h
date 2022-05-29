@@ -17,9 +17,16 @@
  */
 struct HapticParam
 {
-    float midPosition;
-    float referencePosition{0};
-    float currentPosition{0};
+    float midPosition;      //mid position of the actuator <0,1>
+    float referencePosition{0};     //reference position relative to mid position <-0.5,0.5>
+    float currentPosition{0};       //current position relative to mid position <-0.5,0.5>
+};
+
+enum class HapticState : uint8_t
+{
+    Start,
+    Calibration,
+    Action
 };
 
 /*
@@ -36,6 +43,7 @@ public:
 private:
     Actuator* _pActuator{nullptr};
     PositionSensor* _pPositionSensor{nullptr};
+    HapticState _state{HapticState::Start};
 };
 
 

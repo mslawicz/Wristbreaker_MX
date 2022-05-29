@@ -31,7 +31,22 @@ void HapticDevice::handler()
         currentPosition += 1.0F;
     }
     // currentPosition in the range <-0.5,0.5> relative to midPosition
-
     param.currentPosition = currentPosition;
+
+    //haptic handler state machine
+    switch(_state)
+    {
+    case HapticState::Start:
+        break;
+
+    case HapticState::Calibration:
+        break;
+
+    case HapticState::Action:
+        break;
+
+    default:
+        break;
+    }
 }
 
