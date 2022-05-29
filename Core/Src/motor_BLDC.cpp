@@ -74,7 +74,8 @@ float MotorBLDC::getSvmValue(float argument)
 
 void MotorBLDC::initialize()
 {
-
+    _phase = 0;
+    _magnitude = 0;
 }
 
 bool MotorBLDC::calibrate()

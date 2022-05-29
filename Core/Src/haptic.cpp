@@ -16,17 +16,18 @@ HapticDevice::HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor)
 
 void HapticDevice::handler()
 {
+    static constexpr float HalfRange = 0.5F;
     float currentPosition{0};
     if(nullptr != _pPositionSensor)
     {
         currentPosition = _pPositionSensor->getPosition() - param.midPosition;
     }
 
-    if(currentPosition > 0.5F)
+    if(currentPosition > HalfRange)
     {
         currentPosition -= 1.0F;
     }
-    else if(currentPosition < -0.5F)
+    else if(currentPosition < -HalfRange)
     {
         currentPosition += 1.0F;
     }
@@ -55,7 +56,10 @@ void HapticDevice::handler()
         break;
 
     case HapticState::Action:
-
+        if(nullptr != _pActuator)
+        {
+            _pActuator->action();
+        }
         break;
 
     default:

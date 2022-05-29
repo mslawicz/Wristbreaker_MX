@@ -16,6 +16,7 @@ class MotorBLDC : public Actuator
 {
 public:
     MotorBLDC(uint8_t polePairs, TIM_HandleTypeDef* pPwmHtim);
+    ~MotorBLDC() {}
     void initialize() override;
     bool calibrate() override;
     void action() override;
@@ -23,6 +24,8 @@ private:
     void setFieldVector(float angle, float magnitude);
     float getSvmValue(float argument);
     uint8_t _polePairs;
+    float _phase{0};
+    float _magnitude{0};
     TIM_HandleTypeDef* _pPwmHtim;   //pointer to PWM timer handle for this motor
     static constexpr size_t LutSize = 91;
     //Space Vector Modulation Look Up Table for angles 0-90 degrees

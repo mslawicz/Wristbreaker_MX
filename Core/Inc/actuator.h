@@ -12,6 +12,7 @@
 class Actuator
 {
 public:
+    virtual ~Actuator() {}
     virtual void initialize();
     virtual bool calibrate();
     virtual void action();

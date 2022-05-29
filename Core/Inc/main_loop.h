@@ -14,4 +14,13 @@
 #define MAX_15_BIT  0x7FFF
 #define MAX_16_BIT  0xFFFF
 
+enum AdcCh
+{
+    throttle,
+    propeller,
+    mixture,
+    leftBrake,
+    rightBrake
+};
+
 #endif /* INC_MAIN_LOOP_H_ */
