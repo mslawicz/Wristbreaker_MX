@@ -82,7 +82,11 @@ void MotorBLDC::initialize()
 
 bool MotorBLDC::calibrate(HapticParam& hapticParam)
 {
-    float dMag = hapticParam.calMagnitude * 1e-6 * callTimer.getElapsedTime();     //magnitude being increased during the first second
+    if((_magnitude >= hapticParam.calMagnitude) &&
+       (isInRange<float>(hapticParam.currentPosition, -hapticParam.calRange, hapticParam.calRange)))
+    {
+        //conditions for phase shift calculation are met
+    }
 
     setFieldVector(_phase, _magnitude);
 
@@ -96,7 +100,7 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
     }
 
     _phase += _dPhaseDir * hapticParam.calSpeed * callTimer.getElapsedTime();
-    _magnitude += dMag;
+    _magnitude += hapticParam.calMagnitude * 1e-6 * callTimer.getElapsedTime();     //magnitude being increased during the first second
     if(_magnitude > hapticParam.calMagnitude)
     {
         _magnitude = hapticParam.calMagnitude;

@@ -44,4 +44,10 @@ template<typename T> T limit(T value, T min, T max)
     return value;
 }
 
+//check if variable is in the required range
+template<typename T> bool isInRange(T value, T min, T max)
+{
+    return ((value >= min) && (value <= max));
+}
+
 #endif /* INC_CONVERT_H_ */
