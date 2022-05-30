@@ -80,9 +80,9 @@ static void MX_TIM1_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-    pTimerHtim = &htim5;    //htim5 used by Timer class
-    pMotor1Htim = &htim1;  //pointer to htim object instance used by motor #1
-    pHadc = &hadc1;     //pointer to hadc1, which will be used in another module
+    pTimerHtim = &htim5;    /*htim5 used by Timer class*/
+    pMotor1Htim = &htim1;   /*pointer to htim object instance used by motor #1*/
+    pHadc = &hadc1;         /*pointer to hadc1, which will be used in another module*/
     pPosSensSpi = &hspi4;
   /* USER CODE END 1 */
 
@@ -112,7 +112,7 @@ int main(void)
   MX_SPI4_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  redirectStdio(&huart3);     //redirect stdio to console UART
+  redirectStdio(&huart3);     /*redirect stdio to console UART*/
   /* request the first pass of ADC conversions */
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcConvBuffer, hadc1.Init.NbrOfConversion);
 
@@ -123,11 +123,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  mainLoop();   //it never returns fron this function
+  mainLoop();   /*it never returns fron this function*/
 
   while (1)
   {
-      //this while loop should never be entered!
+    /*this while loop should never be entered!*/
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
