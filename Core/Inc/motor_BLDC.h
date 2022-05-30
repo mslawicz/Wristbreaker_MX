@@ -26,6 +26,7 @@ private:
     uint8_t _polePairs;
     float _phase{0};
     float _magnitude{0};
+    float _dPhaseDir{0};            //delta phase direction for calibration procedure
     TIM_HandleTypeDef* _pPwmHtim;   //pointer to PWM timer handle for this motor
     static constexpr size_t LutSize = 91;
     //Space Vector Modulation Look Up Table for angles 0-90 degrees

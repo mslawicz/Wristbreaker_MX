@@ -15,10 +15,11 @@
 struct HapticParam
 {
     float midPosition;              //mid position of the actuator <0,1>
-    float referencePosition   ;     //reference position relative to mid position <-0.5,0.5>
-    float currentPosition   ;       //current position relative to mid position <-0.5,0.5>
+    float referencePosition;        //reference position relative to mid position <-0.5,0.5>
+    float currentPosition;          //current position relative to mid position <-0.5,0.5>
     float calMagnitude;             //nominal actuator force vector magnitude during calibration phase
     float calSpeed;                 //actuator speed in calibration phase
+    float calRange;                 //position range in calibration phase relative to mid position
 };
 
 

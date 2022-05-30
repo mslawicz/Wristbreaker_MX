@@ -76,6 +76,7 @@ void MotorBLDC::initialize()
 {
     _phase = 0;
     _magnitude = 0;
+    _dPhaseDir = 1.0F;
     callTimer.reset();
 }
 
@@ -85,7 +86,16 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
 
     setFieldVector(_phase, _magnitude);
 
-    _phase += hapticParam.calSpeed * callTimer.getElapsedTime();
+    if(hapticParam.currentPosition > hapticParam.calRange)
+    {
+        _dPhaseDir = -1.0F;
+    }
+    if(hapticParam.currentPosition < -hapticParam.calRange)
+    {
+        _dPhaseDir = 1.0F;
+    }
+
+    _phase += _dPhaseDir * hapticParam.calSpeed * callTimer.getElapsedTime();
     _magnitude += dMag;
     if(_magnitude > hapticParam.calMagnitude)
     {

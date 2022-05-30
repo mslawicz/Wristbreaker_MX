@@ -28,10 +28,11 @@ void mainLoop()
     Timer statusLedTimer;
     Timer gameCtrlTimer;
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
-    HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin));   //aileron control haptic device
-    aileronCtrl.hapticParam.midPosition = 0.87F;
+    HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true));   //aileron control haptic device
+    aileronCtrl.hapticParam.midPosition = 0.2F;
     aileronCtrl.hapticParam.calMagnitude = 0.6F;
     aileronCtrl.hapticParam.calSpeed = 0.001F;
+    aileronCtrl.hapticParam.calRange = 0.2F;
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);

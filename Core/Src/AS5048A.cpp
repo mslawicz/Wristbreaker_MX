@@ -7,7 +7,8 @@
 
 #include "AS5048A.h"
 
-AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin) :
+AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin, bool reversed) :
+    PositionSensor(reversed),
     _pSpi(pSpi),
     _csPort(csPort),
     _csPin(csPin)
@@ -32,7 +33,7 @@ float AS5048A::getPosition()
         parity ^= (parity >> 1);
         if(0 == (parity & 1))
         {
-            _lastValidValue = (rdBuf & 0x3FFF) / Max14Bit;
+            _lastValidValue = _reversed ? (0x3FFF - (rdBuf & 0x3FFF)) / Max14Bit : (rdBuf & 0x3FFF) / Max14Bit;
         }
     }
     return _lastValidValue;
