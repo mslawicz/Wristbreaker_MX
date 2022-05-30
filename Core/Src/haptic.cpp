@@ -20,7 +20,7 @@ void HapticDevice::handler()
     float currentPosition{0};
     if(nullptr != _pPositionSensor)
     {
-        currentPosition = _pPositionSensor->getPosition() - param.midPosition;
+        currentPosition = _pPositionSensor->getPosition() - hapticParam.midPosition;
     }
 
     if(currentPosition > HalfRange)
@@ -32,7 +32,7 @@ void HapticDevice::handler()
         currentPosition += 1.0F;
     }
     // currentPosition in the range <-0.5,0.5> relative to midPosition
-    param.currentPosition = currentPosition;
+    hapticParam.currentPosition = currentPosition;
 
     //haptic handler state machine
     switch(_state)
@@ -48,7 +48,7 @@ void HapticDevice::handler()
     case HapticState::Calibration:
         if(nullptr != _pActuator)
         {
-            if(_pActuator->calibrate(param.actuatorParam))
+            if(_pActuator->calibrate(hapticParam))
             {
                 _state = HapticState::Action;
             }

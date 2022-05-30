@@ -8,20 +8,15 @@
 #ifndef INC_ACTUATOR_H_
 #define INC_ACTUATOR_H_
 
+#include "haptic_param.h"
 #include "timer.h"
-
-struct ActuatorParam
-{
-    float calMagnitude;     //nominal actuator force vector magnitude during calibration phase
-    float calSpeed;         //actuator speed in calibration phase
-};
 
 class Actuator
 {
 public:
     virtual ~Actuator() {}
     virtual void initialize();
-    virtual bool calibrate(ActuatorParam& parameters);
+    virtual bool calibrate(HapticParam& hapticParam);
     virtual void action();
 protected:
     Timer callTimer;

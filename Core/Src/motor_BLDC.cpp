@@ -79,17 +79,17 @@ void MotorBLDC::initialize()
     callTimer.reset();
 }
 
-bool MotorBLDC::calibrate(ActuatorParam& parameters)
+bool MotorBLDC::calibrate(HapticParam& hapticParam)
 {
-    float dMag = parameters.calMagnitude * 1e-6 * callTimer.getElapsedTime();     //magnitude being increased during the first second
+    float dMag = hapticParam.calMagnitude * 1e-6 * callTimer.getElapsedTime();     //magnitude being increased during the first second
 
     setFieldVector(_phase, _magnitude);
 
-    _phase += parameters.calSpeed * callTimer.getElapsedTime();
+    _phase += hapticParam.calSpeed * callTimer.getElapsedTime();
     _magnitude += dMag;
-    if(_magnitude > parameters.calMagnitude)
+    if(_magnitude > hapticParam.calMagnitude)
     {
-        _magnitude = parameters.calMagnitude;
+        _magnitude = hapticParam.calMagnitude;
     }
 
     callTimer.reset();

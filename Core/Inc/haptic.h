@@ -9,19 +9,9 @@
 #define INC_HAPTIC_H_
 
 #include "stm32f4xx_hal.h"
+#include "haptic_param.h"
 #include "actuator.h"
 #include "position_sensor.h"
-
-/*
- * structure of haptic device parameters
- */
-struct HapticParam
-{
-    float midPosition;      //mid position of the actuator <0,1>
-    float referencePosition{0};     //reference position relative to mid position <-0.5,0.5>
-    float currentPosition{0};       //current position relative to mid position <-0.5,0.5>
-    ActuatorParam actuatorParam;    //parameter of the actuator
-};
 
 enum class HapticState : uint8_t
 {
@@ -40,7 +30,7 @@ class HapticDevice
 public:
     HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor);
     void handler();
-    HapticParam param;
+    HapticParam hapticParam;
 private:
     Actuator* _pActuator{nullptr};
     PositionSensor* _pPositionSensor{nullptr};
