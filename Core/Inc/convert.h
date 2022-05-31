@@ -8,12 +8,6 @@
 #ifndef INC_CONVERT_H_
 #define INC_CONVERT_H_
 
-constexpr float FullCycle = 360.0F;
-constexpr float HalfCycle = 180.0F;
-constexpr float OneThirdCycle = 120.0F;
-constexpr float QuarterCycle = 90.0F;
-constexpr float PI = 3.14159265359F;
-
 template<typename iType, typename oType> oType scale(iType iMin, iType iMax, iType input, oType oMin, oType oMax, bool limit = true)
 {
     auto result = static_cast<oType>(1.0F * (input-iMin) / (iMax-iMin) * (oMax-oMin) + oMin);

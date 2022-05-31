@@ -6,6 +6,7 @@
  */
 
 #include "AS5048A.h"
+#include "constant.h"
 
 AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin, bool reversed) :
     PositionSensor(reversed),
@@ -18,7 +19,6 @@ AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin, 
 
 float AS5048A::getPosition()
 {
-    constexpr float Max14Bit = 0x3FFF;
     uint16_t wrBuf = 0xFFFF;
     uint16_t rdBuf;
     HAL_GPIO_WritePin(_csPort, _csPin, GPIO_PinState::GPIO_PIN_RESET);
@@ -33,7 +33,7 @@ float AS5048A::getPosition()
         parity ^= (parity >> 1);
         if(0 == (parity & 1))
         {
-            _lastValidValue = _reversed ? (0x3FFF - (rdBuf & 0x3FFF)) / Max14Bit : (rdBuf & 0x3FFF) / Max14Bit;
+            _lastValidValue = _reversed ? (Max14Bit - (rdBuf & Max14Bit)) / Max14BitF : (rdBuf & Max14Bit) / Max14BitF;
         }
     }
     return _lastValidValue;

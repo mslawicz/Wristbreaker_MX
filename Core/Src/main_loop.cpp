@@ -14,6 +14,7 @@
 #include "convert.h"
 #include "AS5048A.h"
 #include "motor_BLDC.h"
+#include "constant.h"
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -46,26 +47,26 @@ void mainLoop()
 
         /* elevator control */
         //elevatorCtrl.handler();
-        gameController.data.Y = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*elevatorCtrl.param.currentPosition*/, -MAX_15_BIT, MAX_15_BIT);
+        gameController.data.Y = scale<uint16_t, int16_t>(0, Max16Bit, 0 /*elevatorCtrl.param.currentPosition*/, -Max15Bit, Max15Bit);
 
         /* rudder control */
         //rudderCtrl.handler();
-        gameController.data.Rz = scale<uint16_t, int16_t>(0, MAX_16_BIT, 0 /*rudderCtrl.param.currentPosition*/, -MAX_15_BIT, MAX_15_BIT);
+        gameController.data.Rz = scale<uint16_t, int16_t>(0, Max16Bit, 0 /*rudderCtrl.param.currentPosition*/, -Max15Bit, Max15Bit);
 
         /* throttle control */
-        gameController.data.slider = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[AdcCh::throttle], 0, MAX_15_BIT);
+        gameController.data.slider = scale<uint16_t, uint16_t>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, Max15Bit);
 
         /* propeller control */
-        gameController.data.dial = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[AdcCh::propeller], 0, MAX_15_BIT);
+        gameController.data.dial = scale<uint16_t, uint16_t>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, Max15Bit);
 
         /* mixture control */
-        gameController.data.Z = scale<uint16_t, int16_t>(0, MAX_12_BIT, adcConvBuffer[AdcCh::mixture], -MAX_15_BIT, MAX_15_BIT);
+        gameController.data.Z = scale<uint16_t, int16_t>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -Max15Bit, Max15Bit);
 
         /* left brake control */
-        gameController.data.Rx = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[AdcCh::leftBrake], 0, MAX_15_BIT);
+        gameController.data.Rx = scale<uint16_t, uint16_t>(0, Max12Bit, adcConvBuffer[AdcCh::leftBrake], 0, Max15Bit);
 
         /* right brake control */
-        gameController.data.Ry = scale<uint16_t, uint16_t>(0, MAX_12_BIT, adcConvBuffer[AdcCh::rightBrake], 0, MAX_15_BIT);
+        gameController.data.Ry = scale<uint16_t, uint16_t>(0, Max12Bit, adcConvBuffer[AdcCh::rightBrake], 0, Max15Bit);
 
         /* request next conversions of analog channels */
         HAL_ADC_Start_DMA(pHadc, (uint32_t*)adcConvBuffer, pHadc->Init.NbrOfConversion);

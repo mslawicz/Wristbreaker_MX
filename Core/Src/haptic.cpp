@@ -18,9 +18,15 @@ void HapticDevice::handler()
 {
     static constexpr float HalfRange = 0.5F;
     float currentPosition{0};
+
     if(nullptr != _pPositionSensor)
     {
+        hapticParam.encoderPosition = _pPositionSensor->getPosition();
         currentPosition = _pPositionSensor->getPosition() - hapticParam.midPosition;
+    }
+    else
+    {
+        hapticParam.encoderPosition = HalfRange;
     }
 
     if(currentPosition > HalfRange)

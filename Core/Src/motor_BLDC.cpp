@@ -7,7 +7,10 @@
 
 #include "motor_BLDC.h"
 #include "convert.h"
+#include "constant.h"
 #include <math.h>
+
+float g_motor[10];  //XXX test
 
 MotorBLDC::MotorBLDC(uint8_t polePairs, TIM_HandleTypeDef* pPwmHtim) :
     _polePairs(polePairs),
@@ -82,10 +85,23 @@ void MotorBLDC::initialize()
 
 bool MotorBLDC::calibrate(HapticParam& hapticParam)
 {
+    //XXX test of data
+    g_motor[0] = hapticParam.encoderPosition;
+    g_motor[1] = hapticParam.currentPosition;
+
     if((_magnitude >= hapticParam.calMagnitude) &&
        (isInRange<float>(hapticParam.currentPosition, -hapticParam.calRange, hapticParam.calRange)))
     {
         //conditions for phase shift calculation are met
+        float encoderPhase = std::fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
+        g_motor[5] = _phase;    //XXX test
+        g_motor[6] = encoderPhase;    //XXX test
+        float phaseShift = _phase - encoderPhase;
+        if(phaseShift < 0)
+        {
+            phaseShift += FullCycle;
+        }
+        g_motor[7] = phaseShift;    //XXX test
     }
 
     setFieldVector(_phase, _magnitude);
@@ -100,7 +116,7 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
     }
 
     _phase += _dPhaseDir * hapticParam.calSpeed * callTimer.getElapsedTime();
-    _magnitude += hapticParam.calMagnitude * 1e-6 * callTimer.getElapsedTime();     //magnitude being increased during the first second
+    _magnitude += hapticParam.calMagnitude * Micro * callTimer.getElapsedTime();     //magnitude being increased during the first second
     if(_magnitude > hapticParam.calMagnitude)
     {
         _magnitude = hapticParam.calMagnitude;

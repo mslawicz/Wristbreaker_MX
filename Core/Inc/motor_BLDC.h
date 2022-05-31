@@ -27,6 +27,7 @@ private:
     float _phase{0};
     float _magnitude{0};
     float _dPhaseDir{0};            //delta phase direction for calibration procedure
+    float _phaseShift{0};           //phase shift between motor phase and encoder phase
     TIM_HandleTypeDef* _pPwmHtim;   //pointer to PWM timer handle for this motor
     static constexpr size_t LutSize = 91;
     //Space Vector Modulation Look Up Table for angles 0-90 degrees
