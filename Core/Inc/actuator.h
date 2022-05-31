@@ -19,7 +19,8 @@ public:
     virtual bool calibrate(HapticParam& hapticParam);
     virtual void action();
 protected:
-    Timer callTimer;
+    Timer _runTimer;    //run timer
+    Timer _calTimer;    //calibration timer
 };
 
 

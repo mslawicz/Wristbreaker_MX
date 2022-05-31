@@ -50,7 +50,7 @@ float MotorBLDC::getSvmValue(float argument)
 
     if (argument >= FullCycle)
     {
-        argument = std::fmod(argument, FullCycle);
+        argument = fmod(argument, FullCycle);
     }
 
     if (argument >= HalfCycle)
@@ -80,7 +80,9 @@ void MotorBLDC::initialize()
     _phase = 0;
     _magnitude = 0;
     _dPhaseDir = 1.0F;
-    callTimer.reset();
+    _phaseShift = 0;
+    _calSteps = 0;
+    _runTimer.reset();
 }
 
 bool MotorBLDC::calibrate(HapticParam& hapticParam)
@@ -93,15 +95,28 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
        (isInRange<float>(hapticParam.currentPosition, -hapticParam.calRange, hapticParam.calRange)))
     {
         //conditions for phase shift calculation are met
-        float encoderPhase = std::fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
+        float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
         g_motor[5] = _phase;    //XXX test
         g_motor[6] = encoderPhase;    //XXX test
-        float phaseShift = _phase - encoderPhase;
+        float phaseShift = fmod(_phase - encoderPhase, FullCycle);
         if(phaseShift < 0)
         {
             phaseShift += FullCycle;
         }
         g_motor[7] = phaseShift;    //XXX test
+        _phaseShift += phaseShift;
+        _calSteps++;
+        g_motor[8] = _phaseShift / _calSteps;    //XXX test
+
+        if(_calTimer.getElapsedTime() > hapticParam.calTimeout)
+        {
+            //TODO end calibration here
+            __NOP();    //it never hits this point - the timer is being reset
+        }
+    }
+    else
+    {
+        _calTimer.reset();
     }
 
     setFieldVector(_phase, _magnitude);
@@ -115,14 +130,14 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
         _dPhaseDir = 1.0F;
     }
 
-    _phase += _dPhaseDir * hapticParam.calSpeed * callTimer.getElapsedTime();
-    _magnitude += hapticParam.calMagnitude * Micro * callTimer.getElapsedTime();     //magnitude being increased during the first second
+    _phase += _dPhaseDir * hapticParam.calSpeed * _runTimer.getElapsedTime();
+    _magnitude += hapticParam.calMagnitude * Micro * _runTimer.getElapsedTime();     //magnitude being increased during the first second
     if(_magnitude > hapticParam.calMagnitude)
     {
         _magnitude = hapticParam.calMagnitude;
     }
 
-    callTimer.reset();
+    _runTimer.reset();
     return false;
 }
 

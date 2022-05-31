@@ -8,6 +8,7 @@
 #ifndef INC_HAPTIC_PARAM_H_
 #define INC_HAPTIC_PARAM_H_
 
+#include "stm32f4xx_hal.h"
 
 /*
  * structure of haptic device parameters
@@ -21,6 +22,7 @@ struct HapticParam
     float calMagnitude;             //nominal actuator force vector magnitude during calibration phase
     float calSpeed;                 //actuator speed in calibration phase
     float calRange;                 //position range in calibration phase relative to mid position
+    uint32_t calTimeout;            //calibration phase timeout in microseconds
 };
 
 
