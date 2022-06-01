@@ -82,35 +82,39 @@ void MotorBLDC::initialize()
     _dPhaseDir = 1.0F;
     _phaseShift = 0;
     _calSteps = 0;
+    _dirChanges = 0;
     _runTimer.reset();
 }
 
 bool MotorBLDC::calibrate(HapticParam& hapticParam)
 {
-    //XXX test of data
-    g_motor[0] = hapticParam.encoderPosition;
-    g_motor[1] = hapticParam.currentPosition;
-
     if((_magnitude >= hapticParam.calMagnitude) &&
        (isInRange<float>(hapticParam.currentPosition, -hapticParam.calRange, hapticParam.calRange)))
     {
         //conditions for phase shift calculation are met
         float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
-        g_motor[5] = _phase;    //XXX test
-        g_motor[6] = encoderPhase;    //XXX test
         float phaseShift = fmod(_phase - encoderPhase, FullCycle);
         if(phaseShift < 0)
         {
             phaseShift += FullCycle;
         }
-        g_motor[7] = phaseShift;    //XXX test
+
         _phaseShift += phaseShift;
         _calSteps++;
-        g_motor[8] = _phaseShift / _calSteps;    //XXX test
+
+        if((_dirChanges >= hapticParam.CalDirChg) && (signbit(hapticParam.currentPosition - hapticParam.referencePosition) != _refDevSign))
+        {
+            //calibration is complete
+            _phaseShift /= _calSteps;   //mean value of all phase shift measurements
+            setFieldVector(_phase, 0);  //turn off magnetic vector
+            return true;    //calibration complete
+        }
+        _refDevSign = signbit(hapticParam.currentPosition - hapticParam.referencePosition);
     }
 
     setFieldVector(_phase, _magnitude);
 
+    bool lastDirSign = signbit(_dPhaseDir);
     if(hapticParam.currentPosition > hapticParam.calRange)
     {
         _dPhaseDir = -1.0F;
@@ -118,6 +122,12 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
     if(hapticParam.currentPosition < -hapticParam.calRange)
     {
         _dPhaseDir = 1.0F;
+    }
+
+    if((signbit(_dPhaseDir) != lastDirSign) && (_calSteps != 0))
+    {
+        //change of direction during phase shift calculation procedure
+        _dirChanges++;
     }
 
     _phase += _dPhaseDir * hapticParam.calSpeed * _runTimer.getElapsedTime();
