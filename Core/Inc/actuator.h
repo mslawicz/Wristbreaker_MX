@@ -20,7 +20,6 @@ public:
     virtual void action();
 protected:
     Timer _runTimer;    //run timer
-    Timer _calTimer;    //calibration timer
 };
 
 

@@ -22,7 +22,6 @@ struct HapticParam
     float calMagnitude;             //nominal actuator force vector magnitude during calibration phase
     float calSpeed;                 //actuator speed in calibration phase
     float calRange;                 //position range in calibration phase relative to mid position
-    uint32_t calTimeout;            //calibration phase timeout in microseconds
 };
 
 

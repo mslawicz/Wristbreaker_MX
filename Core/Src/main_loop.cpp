@@ -34,7 +34,6 @@ void mainLoop()
     aileronCtrl.hapticParam.calMagnitude = 0.6F;
     aileronCtrl.hapticParam.calSpeed = 0.001F;
     aileronCtrl.hapticParam.calRange = 0.2F;
-    aileronCtrl.hapticParam.calTimeout = 5000000U;
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);

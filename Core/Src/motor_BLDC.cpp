@@ -107,16 +107,6 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
         _phaseShift += phaseShift;
         _calSteps++;
         g_motor[8] = _phaseShift / _calSteps;    //XXX test
-
-        if(_calTimer.getElapsedTime() > hapticParam.calTimeout)
-        {
-            //TODO end calibration here
-            __NOP();    //it never hits this point - the timer is being reset
-        }
-    }
-    else
-    {
-        _calTimer.reset();
     }
 
     setFieldVector(_phase, _magnitude);
