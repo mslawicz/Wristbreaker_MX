@@ -17,7 +17,7 @@ public:
     virtual ~Actuator() {}
     virtual void initialize();
     virtual bool calibrate(HapticParam& hapticParam);
-    virtual void action();
+    virtual void action(HapticParam& hapticParam);
 protected:
     Timer _runTimer;    //run timer
 };

@@ -19,7 +19,7 @@ public:
     ~MotorBLDC() {}
     void initialize() override;
     bool calibrate(HapticParam& hapticParam) override;
-    void action() override;
+    void action(HapticParam& hapticParam) override;
 private:
     void setFieldVector(float angle, float magnitude);
     float getSvmValue(float argument);

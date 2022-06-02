@@ -64,7 +64,7 @@ void HapticDevice::handler()
     case HapticState::Action:
         if(nullptr != _pActuator)
         {
-            _pActuator->action();
+            _pActuator->action(hapticParam);
         }
         break;
 

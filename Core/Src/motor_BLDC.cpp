@@ -106,7 +106,6 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
         {
             //calibration is complete
             _phaseShift /= _calSteps;   //mean value of all phase shift measurements
-            setFieldVector(_phase, 0);  //turn off magnetic vector
             return true;    //calibration complete
         }
         _refDevSign = signbit(hapticParam.currentPosition - hapticParam.referencePosition);
@@ -141,7 +140,15 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
     return false;
 }
 
-void MotorBLDC::action()
+void MotorBLDC::action(HapticParam& hapticParam)
 {
+    switch(hapticParam.type)
+    {
+    case HapticType::Spring:
+        break;
 
+    default:
+        //TODO log error here
+        break;
+    }
 }

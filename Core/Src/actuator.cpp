@@ -17,7 +17,7 @@ bool Actuator::calibrate(HapticParam& hapticParam)
     return true;
 }
 
-void Actuator::action()
+void Actuator::action(HapticParam& hapticParam)
 {
 
 }
