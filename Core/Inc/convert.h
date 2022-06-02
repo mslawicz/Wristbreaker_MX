@@ -10,18 +10,18 @@
 
 template<typename iType, typename oType> oType scale(iType iMin, iType iMax, iType input, oType oMin, oType oMax, bool limit = true)
 {
-    auto result = static_cast<oType>(1.0F * (input-iMin) / (iMax-iMin) * (oMax-oMin) + oMin);
     if(limit)
     {
-        if(result < oMin)
+        if(input < iMin)
         {
-            result = oMin;
+            input = iMin;
         }
-        else if(result > oMax)
+        else if(input > iMax)
         {
-            result = oMax;
+            input = iMax;
         }
     }
+    auto result = static_cast<oType>(1.0F * (input-iMin) / (iMax-iMin) * (oMax-oMin) + oMin);
     return result;
 }
 

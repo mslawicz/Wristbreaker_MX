@@ -27,6 +27,9 @@ struct HapticParam
     float calMagnitude;             //nominal actuator force vector magnitude during calibration phase
     float calSpeed;                 //actuator speed in calibration phase
     float calRange;                 //position range in calibration phase relative to mid position
+    float operRange;                //operation range relative to mid position
+    float idleMagnitude;            //field vector magnitude in reference position
+    float gain;                     //torque calculation gain
     uint8_t CalDirChg;              //number of calibration pass direction changes
     HapticType type;                //type of the haptic device
 };

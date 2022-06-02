@@ -145,7 +145,19 @@ void MotorBLDC::action(HapticParam& hapticParam)
     switch(hapticParam.type)
     {
     case HapticType::Spring:
+    {
+        float positionError = hapticParam.referencePosition - hapticParam.currentPosition;
+
+        float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
+        float motorPhase = encoderPhase + _phaseShift;
+        float targetPhase = motorPhase + ((positionError > 0) ? QuarterCycle : -QuarterCycle);
+
+        float magnitude = limit<float>(hapticParam.idleMagnitude + fabs(positionError) * hapticParam.gain, 0, 1.0F);
+
+        setFieldVector(targetPhase, magnitude);
+
         break;
+    }
 
     default:
         //TODO log error here

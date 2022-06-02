@@ -34,7 +34,9 @@ void mainLoop()
     aileronCtrl.hapticParam.calMagnitude = 0.6F;
     aileronCtrl.hapticParam.calSpeed = 0.001F;
     aileronCtrl.hapticParam.calRange = 0.2F;
+    aileronCtrl.hapticParam.operRange = 0.4F;
     aileronCtrl.hapticParam.CalDirChg = 3;
+
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
     Timer::start(pTimerHtim);
@@ -42,9 +44,12 @@ void mainLoop()
     /* main forever loop */
     while(true)
     {
+        aileronCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 5.0F);    //XXX test
+        aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
+
         /* aileron control */
         aileronCtrl.handler();
-        gameController.data.X = aileronCtrl.hapticParam.currentPosition;
+        gameController.data.X = scale<float, int16_t>(-aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
 
         /* elevator control */
         //elevatorCtrl.handler();
