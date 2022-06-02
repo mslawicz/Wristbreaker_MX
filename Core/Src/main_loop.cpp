@@ -44,8 +44,8 @@ void mainLoop()
     /* main forever loop */
     while(true)
     {
-        aileronCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 5.0F);    //XXX test
-        aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
+        aileronCtrl.hapticParam.pGain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 5.0F);    //XXX test
+        aileronCtrl.hapticParam.iGain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 2.0F);  //XXX test
 
         /* aileron control */
         aileronCtrl.handler();

@@ -150,9 +150,13 @@ void MotorBLDC::action(HapticParam& hapticParam)
 
         float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
         float motorPhase = encoderPhase + _phaseShift;
-        float targetPhase = motorPhase + ((positionError > 0) ? QuarterCycle : -QuarterCycle);
 
-        float magnitude = limit<float>(hapticParam.idleMagnitude + fabs(positionError) * hapticParam.gain, 0, 1.0F);
+        float proportional = positionError * hapticParam.pGain;
+        _integral = limit<float>(_integral + positionError * hapticParam.iGain, -0.4F, 0.4F);
+        float torque = proportional + _integral;
+
+        float targetPhase = motorPhase + ((torque > 0) ? QuarterCycle : -QuarterCycle);
+        float magnitude = limit<float>(fabs(torque), 0, 1.0F);
 
         setFieldVector(targetPhase, magnitude);
 
