@@ -36,6 +36,8 @@ void mainLoop()
     aileronCtrl.hapticParam.calRange = 0.2F;
     aileronCtrl.hapticParam.operRange = 0.4F;
     aileronCtrl.hapticParam.CalDirChg = 3;
+    aileronCtrl.hapticParam.gain = 3.8F;
+    aileronCtrl.hapticParam.idleMagnitude = 0.12F;
 
     std::cout << "\r\nWristbreaker v1.0\r\n";
 
@@ -44,8 +46,9 @@ void mainLoop()
     /* main forever loop */
     while(true)
     {
-        aileronCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 5.0F);    //XXX test
+        aileronCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
         aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
+        aileronCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
 
         /* aileron control */
         aileronCtrl.handler();
