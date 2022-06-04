@@ -8,6 +8,7 @@
 #include "motor_BLDC.h"
 #include "convert.h"
 #include "constant.h"
+#include "logger.h"
 #include <math.h>
 
 float g_motor[10];  //XXX test
@@ -146,13 +147,21 @@ void MotorBLDC::action(HapticParam& hapticParam)
     {
     case HapticType::Spring:
     {
+        g_motor[0] = hapticParam.encoderPosition;   //XXX test
+        g_motor[1] = hapticParam.currentPosition;   //XXX test
         float positionError = hapticParam.referencePosition - hapticParam.currentPosition;
+        g_motor[2] = positionError; //XXX test
 
         float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
         float motorPhase = encoderPhase + _phaseShift;
         float targetPhase = motorPhase + ((positionError > 0) ? QuarterCycle : -QuarterCycle);
 
+        g_motor[5] = encoderPhase;   //XXX test
+        g_motor[6] = motorPhase;   //XXX test
+        g_motor[7] = targetPhase;   //XXX test
+
         float magnitude = limit<float>(hapticParam.idleMagnitude + fabs(positionError) * hapticParam.gain, 0, 1.0F);
+        g_motor[3] = magnitude;   //XXX test
 
         setFieldVector(targetPhase, magnitude);
 
@@ -160,7 +169,7 @@ void MotorBLDC::action(HapticParam& hapticParam)
     }
 
     default:
-        //TODO log error here
+        LOG_ERROR_ONCE("unknown type of a haptic device");
         break;
     }
 }

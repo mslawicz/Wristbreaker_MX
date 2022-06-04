@@ -15,6 +15,7 @@
 #include "AS5048A.h"
 #include "motor_BLDC.h"
 #include "constant.h"
+#include "logger.h"
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -39,7 +40,7 @@ void mainLoop()
     aileronCtrl.hapticParam.gain = 3.8F;
     aileronCtrl.hapticParam.idleMagnitude = 0.12F;
 
-    std::cout << "\r\nWristbreaker v1.0\r\n";
+    LOG_ALWAYS("Wristbreaker v1.0");
 
     Timer::start(pTimerHtim);
 
