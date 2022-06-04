@@ -12,6 +12,7 @@
 #include "haptic_param.h"
 #include "actuator.h"
 #include "position_sensor.h"
+#include <string>
 
 enum class HapticState : uint8_t
 {
@@ -28,13 +29,14 @@ enum class HapticState : uint8_t
 class HapticDevice
 {
 public:
-    HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor);
+    HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor, std::string name);
     void handler();
     HapticParam hapticParam;
 private:
     Actuator* _pActuator{nullptr};
     PositionSensor* _pPositionSensor{nullptr};
     HapticState _state{HapticState::Start};
+    std::string _name;
 };
 
 

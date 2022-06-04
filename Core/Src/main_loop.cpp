@@ -29,8 +29,11 @@ void mainLoop()
     constexpr uint32_t HeartbeatPeriod = 500000;
     Timer statusLedTimer;
     Timer gameCtrlTimer;
+
+    LOG_ALWAYS("Wristbreaker v1.0");
+
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
-    HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true));   //aileron control haptic device
+    HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "aileron controller");   //aileron control haptic device
     aileronCtrl.hapticParam.midPosition = 0.2F;
     aileronCtrl.hapticParam.calMagnitude = 0.6F;
     aileronCtrl.hapticParam.calSpeed = 0.001F;
@@ -39,8 +42,6 @@ void mainLoop()
     aileronCtrl.hapticParam.CalDirChg = 3;
     aileronCtrl.hapticParam.gain = 3.8F;
     aileronCtrl.hapticParam.idleMagnitude = 0.12F;
-
-    LOG_ALWAYS("Wristbreaker v1.0");
 
     Timer::start(pTimerHtim);
 

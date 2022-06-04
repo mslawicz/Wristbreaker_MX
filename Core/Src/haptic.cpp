@@ -6,12 +6,14 @@
  */
 
 #include "haptic.h"
+#include "logger.h"
 
-HapticDevice::HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor) :
+HapticDevice::HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor, std::string name) :
     _pActuator(pActuator),
-    _pPositionSensor(pPositionSensor)
+    _pPositionSensor(pPositionSensor),
+    _name(name)
 {
-
+    LOG_INFO("device \"" << _name << "\" created");
 }
 
 void HapticDevice::handler()
