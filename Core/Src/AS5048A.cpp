@@ -7,6 +7,7 @@
 
 #include "AS5048A.h"
 #include "constant.h"
+#include "logger.h"
 
 AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin, bool reversed) :
     PositionSensor(reversed),
@@ -35,6 +36,10 @@ float AS5048A::getPosition()
         {
             _lastValidValue = _reversed ? (Max14Bit - (rdBuf & Max14Bit)) / Max14BitF : (rdBuf & Max14Bit) / Max14BitF;
         }
+    }
+    else
+    {
+        LOG_ERROR_ONCE("AS5048A SPI error code " << result);
     }
     return _lastValidValue;
 }

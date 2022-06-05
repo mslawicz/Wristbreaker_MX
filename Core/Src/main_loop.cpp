@@ -13,6 +13,7 @@
 #include "haptic.h"
 #include "convert.h"
 #include "AS5048A.h"
+#include "AS5600.h" //XXX test
 #include "motor_BLDC.h"
 #include "constant.h"
 #include "logger.h"
@@ -45,6 +46,8 @@ void mainLoop()
     aileronCtrl.hapticParam.idleMagnitude = 0.12F;
 
     Timer::start(pTimerHtim);
+
+    AS5600 testEncoder(pEncI2c);    //XXX test
 
     /* main forever loop */
     while(true)
@@ -94,6 +97,9 @@ void mainLoop()
             gameController.sendReport();
             gameCtrlTimer.reset();
         }
+
+        float testPos = testEncoder.getPosition();  //XXX test
+        __NOP();    //XXX test
     }
 }
 

@@ -13,10 +13,11 @@
 class AS5600 : public PositionSensor
 {
 public:
-    AS5600(I2C_HandleTypeDef* pI2c, /*GPIO_TypeDef* csPort, uint16_t csPin, */bool reversed = false);
+    AS5600(I2C_HandleTypeDef* pI2c, bool reversed = false);
     float getPosition() override;
 private:
     I2C_HandleTypeDef* _pI2c;
+    static constexpr uint8_t _DevAddr = 0x36;
     //GPIO_TypeDef* _csPort;
     //uint16_t _csPin;
     float _lastValidValue{0};
