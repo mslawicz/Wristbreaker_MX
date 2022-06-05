@@ -22,6 +22,7 @@ ADC_HandleTypeDef* pHadc;    //pointer to ADC object
 uint16_t adcConvBuffer[MAX_ADC_CH]; //buffer for ADC conversion results
 TIM_HandleTypeDef* pMotor1Htim;  //pointer to htim object instance used by motor #1
 SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
+I2C_HandleTypeDef* pEncI2c;      //pointer to encoder I2C bus
 
 
 void mainLoop()

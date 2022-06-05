@@ -16,7 +16,8 @@ extern TIM_HandleTypeDef* pTimerHtim;  //pointer to htim object instance used by
 extern TIM_HandleTypeDef* pMotor1Htim;  //pointer to htim object instance used by motor #1
 extern ADC_HandleTypeDef* pHadc;    //pointer to ADC object
 extern uint16_t adcConvBuffer[MAX_ADC_CH]; //buffer for ADC conversion results
-extern SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
+extern SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus handle
+extern I2C_HandleTypeDef* pEncI2c;      //pointer to encoder I2C bus handle
 
 #ifdef __cplusplus
 extern "C"
