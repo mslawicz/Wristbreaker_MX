@@ -17,7 +17,7 @@ public:
     float getPosition() override;
 private:
     I2C_HandleTypeDef* _pI2c;
-    static constexpr uint8_t _DevAddr = 0x36;
+    static constexpr uint8_t _DevAddr = 0x6C;
     //GPIO_TypeDef* _csPort;
     //uint16_t _csPin;
     float _lastValidValue{0};

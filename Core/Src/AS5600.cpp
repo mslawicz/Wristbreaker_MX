@@ -24,10 +24,12 @@ float AS5600::getPosition()
 {
     static constexpr uint32_t I2cTimeout = 10;  //in ms
     uint8_t rdReg = 0x0E;
-    if(HAL_I2C_Master_Transmit(_pI2c, _DevAddr, &rdReg, 1, I2cTimeout) == HAL_OK)
+    auto result = HAL_I2C_Master_Transmit(_pI2c, _DevAddr, &rdReg, 1, I2cTimeout);
+    if(result == HAL_OK)
     {
         uint16_t angle;
-        if(HAL_I2C_Master_Receive(_pI2c, _DevAddr, reinterpret_cast<uint8_t*>(&angle), 2, I2cTimeout) == HAL_OK)
+        result = HAL_I2C_Master_Receive(_pI2c, _DevAddr, reinterpret_cast<uint8_t*>(&angle), 2, I2cTimeout);
+        if(result == HAL_OK)
         {
             //convert from 12-bit big endian
             constexpr uint8_t _8bit = 8;
@@ -36,16 +38,16 @@ float AS5600::getPosition()
             {
                 angle = Max12Bit - angle;
             }
-            _lastValidValue = scale<uint16_t, float>(0, Max12Bit, angle, 0, 1.0F);
+            _lastValidValue = scale<uint16_t, float>(0, Max12Bit + 1, angle, 0, 1.0F);
         }
         else
         {
-            LOG_ERROR_ONCE("AS5600 I2C read error");
+            LOG_ERROR_ONCE("AS5600 I2C read error " << result);
         }
     }
     else
     {
-        LOG_ERROR_ONCE("AS5600 I2C write error");
+        LOG_ERROR_ONCE("AS5600 I2C write error " << result);
     }
 
     return _lastValidValue;
