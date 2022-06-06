@@ -22,7 +22,7 @@ AS5600::AS5600(I2C_HandleTypeDef* pI2c, bool reversed) :
 
 float AS5600::getPosition()
 {
-    static constexpr uint32_t I2cTimeout = 10;  //in ms
+    static constexpr uint32_t I2cTimeout = 1;  //in ms
     uint8_t rdReg = 0x0E;
     auto result = HAL_I2C_Master_Transmit(_pI2c, _DevAddr, &rdReg, 1, I2cTimeout);
     if(result == HAL_OK)
