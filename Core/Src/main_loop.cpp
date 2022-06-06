@@ -52,7 +52,10 @@ void mainLoop()
     {
         aileronCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
         aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
-        aileronCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
+        //aileronCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
+        //XXX test of random reference movements
+        aileronCtrl.hapticParam.referencePosition = limit<float>(aileronCtrl.hapticParam.referencePosition + ((rand() & 0xFF) - 128) * 0.00001F, -0.15, 0.15);
+
 
         /* aileron control */
         aileronCtrl.handler();

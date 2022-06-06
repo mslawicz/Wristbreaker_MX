@@ -14,8 +14,6 @@
 AS5600::AS5600(I2C_HandleTypeDef* pI2c, bool reversed) :
     PositionSensor(reversed),
     _pI2c(pI2c)
-    //_csPort(csPort),
-    //_csPin(csPin)
 {
 
 }
