@@ -600,6 +600,21 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+/**
+  * @brief  Tx and Rx Transfer completed callback.
+  * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
+  *               the configuration information for SPI module.
+  * @retval None
+  */
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if(hspi == pPosSensSpi)
+    {
+        /*position sensor SPI transmission complete*/
+        HAL_GPIO_WritePin(ENC1_CS_GPIO_Port, ENC1_CS_Pin, GPIO_PIN_SET);    /*XXX this should be handled in a SPI ctrl class*/
+    }
+}
+
 /* USER CODE END 4 */
 
 /**

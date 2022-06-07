@@ -10,6 +10,10 @@
 #include "logger.h"
 #include "convert.h"
 
+//XXX some global buffers
+uint16_t g_wrBuf = 0xFFFF;
+uint16_t g_rdBuf;
+
 AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin, bool reversed) :
     PositionSensor(reversed),
     _pSpi(pSpi),
@@ -21,31 +25,27 @@ AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin, 
 
 float AS5048A::getPosition()
 {
-    uint16_t wrBuf = 0xFFFF;
-    uint16_t rdBuf;
-    HAL_GPIO_WritePin(_csPort, _csPin, GPIO_PinState::GPIO_PIN_RESET);
-    auto result = HAL_SPI_TransmitReceive(_pSpi, (uint8_t*)&wrBuf, (uint8_t*)&rdBuf, 1, 2);
-    HAL_GPIO_WritePin(_csPort, _csPin, GPIO_PinState::GPIO_PIN_SET);
-    if(HAL_OK == result)
+    uint16_t rdBuf = g_rdBuf;
+    //check parity
+    uint16_t parity = rdBuf ^ (rdBuf >> 8);
+    parity ^= (parity >> 4);
+    parity ^= (parity >> 2);
+    parity ^= (parity >> 1);
+    if(0 == (parity & 1))
     {
-        //check parity
-        uint16_t parity = rdBuf ^ (rdBuf >> 8);
-        parity ^= (parity >> 4);
-        parity ^= (parity >> 2);
-        parity ^= (parity >> 1);
-        if(0 == (parity & 1))
+        rdBuf &= Max14Bit;
+        if(_reversed)
         {
-            rdBuf &= Max14Bit;
-            if(_reversed)
-            {
-                rdBuf = Max14Bit - rdBuf;
-            }
-            _lastValidValue = scale<uint16_t, float>(0, Max14Bit + 1, rdBuf, 0, 1.0F);
+            rdBuf = Max14Bit - rdBuf;
         }
+        _lastValidValue = scale<uint16_t, float>(0, Max14Bit + 1, rdBuf, 0, 1.0F);
     }
-    else
-    {
-        LOG_ERROR_ONCE("AS5048A SPI error code " << result);
-    }
+
+    //LOG_ERROR_ONCE("AS5048A SPI error code " << result);
+
+
+    HAL_GPIO_WritePin(_csPort, _csPin, GPIO_PinState::GPIO_PIN_RESET);  //CS low in main context, CS high in interrupt context
+    HAL_SPI_TransmitReceive_IT(_pSpi, (uint8_t*)&g_wrBuf, (uint8_t*)&g_rdBuf, 1);    //request transmission in interrupts
+
     return _lastValidValue;
 }
