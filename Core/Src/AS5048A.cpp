@@ -43,9 +43,5 @@ float AS5048A::getPosition()
 
     //LOG_ERROR_ONCE("AS5048A SPI error code " << result);
 
-
-    HAL_GPIO_WritePin(_csPort, _csPin, GPIO_PinState::GPIO_PIN_RESET);  //CS low in main context, CS high in interrupt context
-    HAL_SPI_TransmitReceive_IT(_pSpi, (uint8_t*)&g_wrBuf, (uint8_t*)&g_rdBuf, 1);    //request transmission in interrupts
-
     return _lastValidValue;
 }
