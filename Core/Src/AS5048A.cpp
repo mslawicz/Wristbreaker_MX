@@ -10,22 +10,18 @@
 #include "logger.h"
 #include "convert.h"
 
-//XXX some global buffers
-uint16_t g_wrBuf = 0xFFFF;
-uint16_t g_rdBuf;
-
-AS5048A::AS5048A(SPI_HandleTypeDef* pSpi, GPIO_TypeDef* csPort, uint16_t csPin, bool reversed) :
+AS5048A::AS5048A(SpiSupervisor& spiSupervisor, GPIO_TypeDef* csPort, uint16_t csPin, bool reversed) :
     PositionSensor(reversed),
-    _pSpi(pSpi),
+    _spiSupervisor(spiSupervisor),
     _csPort(csPort),
     _csPin(csPin)
 {
-
+    HAL_GPIO_WritePin(_csPort, _csPin, GPIO_PinState::GPIO_PIN_SET);  //CS not active
 }
 
 float AS5048A::getPosition()
 {
-    uint16_t rdBuf = g_rdBuf;
+    uint16_t rdBuf = _rdBuf;
     //check parity
     uint16_t parity = rdBuf ^ (rdBuf >> 8);
     parity ^= (parity >> 4);
@@ -40,8 +36,16 @@ float AS5048A::getPosition()
         }
         _lastValidValue = scale<uint16_t, float>(0, Max14Bit + 1, rdBuf, 0, 1.0F);
     }
-
-    //LOG_ERROR_ONCE("AS5048A SPI error code " << result);
+    else
+    {
+        LOG_ERROR_ONCE("AS5048A value parity error");
+    }
 
     return _lastValidValue;
+}
+
+void AS5048A::requestNewValue()
+{
+    SpiTransParams spiTransParams{_csPort, _csPin, SpiTransType::TransmitReceive, reinterpret_cast<uint8_t*>(&_wrBuf), reinterpret_cast<uint8_t*>(&_rdBuf), 1};
+    _spiSupervisor.transactionRequest(spiTransParams);
 }

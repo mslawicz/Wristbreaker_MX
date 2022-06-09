@@ -10,6 +10,7 @@
 
 #include "stm32f4xx_hal.h"
 #include <queue>
+#include <map>
 
 enum class SpiTransType : uint8_t
 {
@@ -23,8 +24,8 @@ struct SpiTransParams
     GPIO_TypeDef* csPort;
     uint16_t csPin;
     SpiTransType type;
-    uint8_t* wrBuf;
-    uint8_t* rdBuf;
+    uint8_t* pWrBuf;
+    uint8_t* pRdBuf;
     uint16_t size;
 };
 
@@ -32,8 +33,11 @@ class SpiSupervisor
 {
 public:
     SpiSupervisor(SPI_HandleTypeDef* pSpi);
-    void TransactionRequest(SpiTransParams& spiTransParams);
-    void startTransaction(SpiTransParams& spiTransParams);
+    void transactionRequest(SpiTransParams& spiTransParams);
+    void startTransaction();
+    void markNotBusy() { _isBusy = false; }
+    static inline std::map<SPI_HandleTypeDef*, SpiSupervisor*> spiSupervisorMap;
+    std::queue<SpiTransParams>& getSpiRequestQueue() { return _spiRequestQueue; }
 private:
     SPI_HandleTypeDef* _pSpi;
     std::queue<SpiTransParams> _spiRequestQueue;

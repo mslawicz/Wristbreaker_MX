@@ -16,6 +16,7 @@
 #include "motor_BLDC.h"
 #include "constant.h"
 #include "logger.h"
+#include "spi_supervisor.h"
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -34,7 +35,8 @@ void mainLoop()
     LOG_ALWAYS("Wristbreaker v1.0");
 
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
-    HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(pPosSensSpi, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "aileron controller");   //aileron control haptic device
+    SpiSupervisor posSensSpiSupervisor(pPosSensSpi);
+    HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(posSensSpiSupervisor, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "aileron controller");   //aileron control haptic device
     aileronCtrl.hapticParam.type = HapticType::Spring;
     aileronCtrl.hapticParam.midPosition = 0.2F;
     aileronCtrl.hapticParam.calMagnitude = 0.6F;

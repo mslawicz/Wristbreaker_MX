@@ -9,29 +9,31 @@
 #include "spi_supervisor.h"
 #include "main_loop_api.h"
 #include "main.h"       //XXX is it necessary?
+#include "logger.h"
 
 SpiSupervisor::SpiSupervisor(SPI_HandleTypeDef* pSpi) :
     _pSpi(pSpi)
 {
-
+    spiSupervisorMap[pSpi] = this;
 }
 
-void SpiSupervisor::TransactionRequest(SpiTransParams& spiTransParams)
+void SpiSupervisor::transactionRequest(SpiTransParams& spiTransParams)
 {
     disableIrq();
     _spiRequestQueue.push(spiTransParams);
     if(!_isBusy)
     {
         //CS is not active - start transaction now
-        startTransaction(spiTransParams);
+        startTransaction();
     }
     enableIrq();
 }
 
-void SpiSupervisor::startTransaction(SpiTransParams& spiTransParams)
+void SpiSupervisor::startTransaction()
 {
+    SpiTransParams& spiTransParams = _spiRequestQueue.front();
     HAL_GPIO_WritePin(spiTransParams.csPort, spiTransParams.csPin, GPIO_PinState::GPIO_PIN_RESET);  //CS active
-    if(HAL_SPI_TransmitReceive_IT(_pSpi, (uint8_t*)&spiTransParams.wrBuf, (uint8_t*)&spiTransParams.rdBuf, spiTransParams.size) == HAL_OK)   //start transaction
+    if(HAL_SPI_TransmitReceive_IT(_pSpi, spiTransParams.pWrBuf, spiTransParams.pRdBuf, spiTransParams.size) == HAL_OK)   //start transaction
     {
         _isBusy = true;
     }
@@ -98,9 +100,33 @@ void SpiSupervisor::enableIrq()
   */
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    if(hspi == pPosSensSpi)
+    auto it = SpiSupervisor::spiSupervisorMap.find(hspi);
+    if(it != SpiSupervisor::spiSupervisorMap.end())
     {
-        /*position sensor SPI transmission complete*/
-        //how to get data from a certain SpiSupervisor object?
+        //SPI device found in the map
+        std::queue<SpiTransParams>& spiRequestQueue = it->second->getSpiRequestQueue();
+        if(!spiRequestQueue.empty())
+        {
+            auto request = spiRequestQueue.front();
+            HAL_GPIO_WritePin(request.csPort, request.csPin, GPIO_PinState::GPIO_PIN_SET);  //CS not active
+            spiRequestQueue.pop();
+            //if the queue is not empty - start the next transaction
+            if(spiRequestQueue.empty())
+            {
+                it->second->markNotBusy();
+            }
+            else
+            {
+                it->second->startTransaction();
+            }
+        }
+        else
+        {
+            LOG_ERROR_ONCE("no SPI transaction request in the queue");
+        }
+    }
+    else
+    {
+        LOG_ERROR_ONCE("SPI supervisor object not found in the map");
     }
 }

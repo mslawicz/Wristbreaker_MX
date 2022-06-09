@@ -17,6 +17,7 @@ public:
     PositionSensor(bool reversed) : _reversed(reversed) {}
     virtual ~PositionSensor() {}
     virtual float getPosition() { return 0; }
+    virtual void requestNewValue() {}
 protected:
     bool _reversed;
 };
