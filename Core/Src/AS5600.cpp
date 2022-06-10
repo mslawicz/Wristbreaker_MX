@@ -11,42 +11,30 @@
 #include "constant.h"
 #include "logger.h"
 
-AS5600::AS5600(I2C_HandleTypeDef* pI2c, bool reversed) :
+AS5600::AS5600(I2cSupervisor& i2cSupervisor, bool reversed) :
     PositionSensor(reversed),
-    _pI2c(pI2c)
+    _i2cSupervisor(i2cSupervisor)
 {
 
 }
 
 float AS5600::getPosition()
 {
-    static constexpr uint32_t I2cTimeout = 1;  //in ms
-    uint8_t rdReg = 0x0E;
-    auto result = HAL_I2C_Master_Transmit(_pI2c, _DevAddr, &rdReg, 1, I2cTimeout);
-    if(result == HAL_OK)
+    //convert from 12-bit big endian
+    constexpr uint8_t _8bit = 8;
+    uint16_t angle = (_angle << _8bit) | (_angle >> _8bit);
+    if(_reversed)
     {
-        uint16_t angle;
-        result = HAL_I2C_Master_Receive(_pI2c, _DevAddr, reinterpret_cast<uint8_t*>(&angle), 2, I2cTimeout);
-        if(result == HAL_OK)
-        {
-            //convert from 12-bit big endian
-            constexpr uint8_t _8bit = 8;
-            angle = (angle << _8bit) | (angle >> _8bit);
-            if(_reversed)
-            {
-                angle = Max12Bit - angle;
-            }
-            _lastValidValue = scale<uint16_t, float>(0, Max12Bit + 1, angle, 0, 1.0F);
-        }
-        else
-        {
-            LOG_ERROR_ONCE("AS5600 I2C read error " << result);
-        }
+        angle = Max12Bit - angle;
     }
-    else
-    {
-        LOG_ERROR_ONCE("AS5600 I2C write error " << result);
-    }
-
+    _lastValidValue = scale<uint16_t, float>(0, Max12Bit + 1, angle, 0, 1.0F);
     return _lastValidValue;
+}
+
+void AS5600::requestNewValue()
+{
+    I2cTransParams i2cTransParams{_DevAddr, I2cTransType::Transmit, &_regAddr, 1};
+    _i2cSupervisor.transactionRequest(i2cTransParams);
+    i2cTransParams = {_DevAddr, I2cTransType::Receive, reinterpret_cast<uint8_t*>(&_angle), 2};
+    _i2cSupervisor.transactionRequest(i2cTransParams);
 }

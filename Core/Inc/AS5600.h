@@ -9,18 +9,20 @@
 #define INC_AS5600_H_
 
 #include "position_sensor.h"
+#include "i2c_supervisor.h"
 
 class AS5600 : public PositionSensor
 {
 public:
-    AS5600(I2C_HandleTypeDef* pI2c, bool reversed = false);
+    AS5600(I2cSupervisor& i2cSupervisor, bool reversed = false);
     float getPosition() override;
+    void requestNewValue() override;
 private:
-    I2C_HandleTypeDef* _pI2c;
+    I2cSupervisor& _i2cSupervisor;
     static constexpr uint8_t _DevAddr = 0x36 << 1;
-    //GPIO_TypeDef* _csPort;
-    //uint16_t _csPin;
     float _lastValidValue{0};
+    uint8_t _regAddr = 0x0E;
+    uint16_t _angle{0};
 };
 
 

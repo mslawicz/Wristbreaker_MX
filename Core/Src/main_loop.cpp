@@ -18,6 +18,7 @@
 #include "constant.h"
 #include "logger.h"
 #include "spi_supervisor.h"
+#include "i2c_supervisor.h" //XXX test
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -48,7 +49,8 @@ void mainLoop()
     aileronCtrl.hapticParam.gain = 3.8F;
     aileronCtrl.hapticParam.idleMagnitude = 0.12F;
 
-    PositionSensor* pTestPosSensor = new AS5600(pEncI2c);
+    I2cSupervisor posSensI2cSupervisor(pEncI2c);
+    PositionSensor* pTestPosSensor = new AS5600(posSensI2cSupervisor);
 
     Timer::start(pTimerHtim);
 
