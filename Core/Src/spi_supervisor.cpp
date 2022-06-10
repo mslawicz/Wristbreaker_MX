@@ -8,7 +8,6 @@
 
 #include "spi_supervisor.h"
 #include "main_loop_api.h"
-#include "main.h"       //XXX is it necessary?
 #include "logger.h"
 
 SpiSupervisor::SpiSupervisor(SPI_HandleTypeDef* pSpi) :
