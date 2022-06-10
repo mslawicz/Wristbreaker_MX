@@ -13,6 +13,7 @@
 #include "haptic.h"
 #include "convert.h"
 #include "AS5048A.h"
+#include "AS5600.h" //XXX test
 #include "motor_BLDC.h"
 #include "constant.h"
 #include "logger.h"
@@ -46,6 +47,8 @@ void mainLoop()
     aileronCtrl.hapticParam.CalDirChg = 3;
     aileronCtrl.hapticParam.gain = 3.8F;
     aileronCtrl.hapticParam.idleMagnitude = 0.12F;
+
+    PositionSensor* pTestPosSensor = new AS5600(pEncI2c);
 
     Timer::start(pTimerHtim);
 
@@ -91,6 +94,10 @@ void mainLoop()
             HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
             statusLedTimer.reset();
         }
+
+        auto pos = pTestPosSensor->getPosition();  //XXX test
+        (void)pos;
+        pTestPosSensor->requestNewValue();  //XXX test
 
         if(gameCtrlTimer.hasElapsed(GameController::ReportInterval))
         {
