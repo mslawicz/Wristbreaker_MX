@@ -16,16 +16,14 @@
 enum class I2cTransType : uint8_t
 {
     Transmit,
-    Receive,
-    TransmitReceive
+    Receive
 };
 
 struct I2cTransParams
 {
     uint8_t slaveAddr;
     I2cTransType type;
-    uint8_t* pWrBuf;
-    uint8_t* pRdBuf;
+    uint8_t* pData;
     uint16_t size;
 };
 
