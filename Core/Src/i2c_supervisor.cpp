@@ -19,11 +19,11 @@ void I2cSupervisor::transactionRequest(I2cTransParams& i2cTransParams)
 {
     disableIrq();
     _i2cRequestQueue.push(i2cTransParams);
+    enableIrq();
     if(!_isBusy)
     {
         startTransaction();
     }
-    enableIrq();
 }
 
 void I2cSupervisor::startTransaction()
@@ -42,12 +42,12 @@ void I2cSupervisor::startTransaction()
 
     if(result == HAL_OK)   //start transaction
     {
-        _isBusy = true;
+        //_isBusy = true;
     }
     else
     {
         _isBusy = false;
-        LOG_ERROR_ONCE("I2C transaction failed");
+        LOG_ERROR_ONCE("I2C transaction error " << result);
     }
 }
 
