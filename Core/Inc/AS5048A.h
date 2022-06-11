@@ -16,7 +16,6 @@ class AS5048A : public PositionSensor
 public:
     AS5048A(SpiSupervisor& spiSupervisor, GPIO_TypeDef* csPort, uint16_t csPin, bool reversed = false);
     float getPosition() override;
-    void requestNewValue() override;
 private:
     SpiSupervisor& _spiSupervisor;
     GPIO_TypeDef* _csPort;
@@ -24,6 +23,7 @@ private:
     float _lastValidValue{0};
     uint16_t _wrBuf{0xFFFF};
     uint16_t _rdBuf{0};
+    volatile bool _newData{true};
 };
 
 

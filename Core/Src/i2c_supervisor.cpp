@@ -93,6 +93,12 @@ void processI2CMasterCpltCallback(I2C_HandleTypeDef *hi2c)
         std::queue<I2cTransParams>& i2cRequestQueue = it->second->getI2cRequestQueue();
         if(!i2cRequestQueue.empty())
         {
+            auto request = i2cRequestQueue.front();
+            //mark new data
+            if(request.pNewData != nullptr)
+            {
+                *request.pNewData = true;
+            }
             i2cRequestQueue.pop();
             //if the queue is not empty - start the next transaction
             if(i2cRequestQueue.empty())

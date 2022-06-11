@@ -21,31 +21,31 @@ AS5048A::AS5048A(SpiSupervisor& spiSupervisor, GPIO_TypeDef* csPort, uint16_t cs
 
 float AS5048A::getPosition()
 {
-    uint16_t rdBuf = _rdBuf;
-    //check parity
-    uint16_t parity = rdBuf ^ (rdBuf >> 8);
-    parity ^= (parity >> 4);
-    parity ^= (parity >> 2);
-    parity ^= (parity >> 1);
-    if(0 == (parity & 1))
+    if(_newData)
     {
-        rdBuf &= Max14Bit;
-        if(_reversed)
+        _newData = false;
+        uint16_t rdBuf = _rdBuf;
+        //check parity
+        uint16_t parity = rdBuf ^ (rdBuf >> 8);
+        parity ^= (parity >> 4);
+        parity ^= (parity >> 2);
+        parity ^= (parity >> 1);
+        if(0 == (parity & 1))
         {
-            rdBuf = Max14Bit - rdBuf;
+            rdBuf &= Max14Bit;
+            if(_reversed)
+            {
+                rdBuf = Max14Bit - rdBuf;
+            }
+            _lastValidValue = scale<uint16_t, float>(0, Max14Bit + 1, rdBuf, 0, 1.0F);
         }
-        _lastValidValue = scale<uint16_t, float>(0, Max14Bit + 1, rdBuf, 0, 1.0F);
+        else
+        {
+            LOG_ERROR_ONCE("AS5048A value parity error");
+        }
+        //request new value from the sensor
+        SpiTransParams spiTransParams{_csPort, _csPin, SpiTransType::TransmitReceive, reinterpret_cast<uint8_t*>(&_wrBuf), reinterpret_cast<uint8_t*>(&_rdBuf), 1, &_newData};
+        _spiSupervisor.transactionRequest(spiTransParams);
     }
-    else
-    {
-        LOG_ERROR_ONCE("AS5048A value parity error");
-    }
-
     return _lastValidValue;
-}
-
-void AS5048A::requestNewValue()
-{
-    SpiTransParams spiTransParams{_csPort, _csPin, SpiTransType::TransmitReceive, reinterpret_cast<uint8_t*>(&_wrBuf), reinterpret_cast<uint8_t*>(&_rdBuf), 1};
-    _spiSupervisor.transactionRequest(spiTransParams);
 }

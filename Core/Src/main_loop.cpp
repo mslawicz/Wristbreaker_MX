@@ -99,7 +99,6 @@ void mainLoop()
 
         auto pos = pTestPosSensor->getPosition();  //XXX test
         (void)pos;
-        pTestPosSensor->requestNewValue();  //XXX test
 
         if(gameCtrlTimer.hasElapsed(GameController::ReportInterval))
         {

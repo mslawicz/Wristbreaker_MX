@@ -25,7 +25,6 @@ void HapticDevice::handler()
     {
         hapticParam.encoderPosition = _pPositionSensor->getPosition();
         currentPosition = hapticParam.encoderPosition - hapticParam.midPosition;
-        _pPositionSensor->requestNewValue();
     }
     else
     {

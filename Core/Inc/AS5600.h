@@ -16,13 +16,13 @@ class AS5600 : public PositionSensor
 public:
     AS5600(I2cSupervisor& i2cSupervisor, bool reversed = false);
     float getPosition() override;
-    void requestNewValue() override;
 private:
     I2cSupervisor& _i2cSupervisor;
     static constexpr uint8_t _DevAddr = 0x36 << 1;
     float _lastValidValue{0};
     uint8_t _regAddr = 0x0E;
     uint16_t _angle{0};
+    volatile bool _newData{true};
 };
 
 

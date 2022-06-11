@@ -27,6 +27,7 @@ struct SpiTransParams
     uint8_t* pWrBuf;
     uint8_t* pRdBuf;
     uint16_t size;
+    volatile bool* pNewData;
 };
 
 class SpiSupervisor

@@ -108,6 +108,11 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
         {
             auto request = spiRequestQueue.front();
             HAL_GPIO_WritePin(request.csPort, request.csPin, GPIO_PinState::GPIO_PIN_SET);  //CS not active
+            //mark new data
+            if(request.pNewData != nullptr)
+            {
+                *request.pNewData = true;
+            }
             spiRequestQueue.pop();
             //if the queue is not empty - start the next transaction
             if(spiRequestQueue.empty())

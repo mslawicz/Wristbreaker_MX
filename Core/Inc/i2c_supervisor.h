@@ -25,6 +25,7 @@ struct I2cTransParams
     I2cTransType type;
     uint8_t* pData;
     uint16_t size;
+    volatile bool* pNewData;
 };
 
 class I2cSupervisor
