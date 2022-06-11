@@ -61,6 +61,9 @@ void mainLoop()
         aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
         aileronCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
 
+        auto pos = pTestPosSensor->getPosition();  //XXX test
+        (void)pos;
+
         /* aileron control */
         aileronCtrl.handler();
         gameController.data.X = scale<float, int16_t>(-aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
@@ -96,9 +99,6 @@ void mainLoop()
             HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
             statusLedTimer.reset();
         }
-
-        auto pos = pTestPosSensor->getPosition();  //XXX test
-        (void)pos;
 
         if(gameCtrlTimer.hasElapsed(GameController::ReportInterval))
         {
