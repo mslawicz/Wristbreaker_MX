@@ -42,7 +42,7 @@ void I2cSupervisor::startTransaction()
 
     if(result == HAL_OK)   //start transaction
     {
-        //_isBusy = true;
+        _isBusy = true;
     }
     else
     {
