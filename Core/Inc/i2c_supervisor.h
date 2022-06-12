@@ -31,7 +31,7 @@ struct I2cTransParams
 class I2cSupervisor
 {
 public:
-    I2cSupervisor(I2C_HandleTypeDef* pI2c);
+    I2cSupervisor(I2C_HandleTypeDef* pI2c, uint8_t maxSiz);
     void transactionRequest(I2cTransParams& i2cTransParams);
     void startTransaction();
     void markNotBusy() { _isBusy = false; }
@@ -43,6 +43,7 @@ private:
     void disableIrq();
     void enableIrq();
     bool _isBusy{false};
+    uint8_t _maxSize;   //maximum size of the queue
 };
 
 

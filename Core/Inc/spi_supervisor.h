@@ -33,7 +33,7 @@ struct SpiTransParams
 class SpiSupervisor
 {
 public:
-    SpiSupervisor(SPI_HandleTypeDef* pSpi);
+    SpiSupervisor(SPI_HandleTypeDef* pSpi, uint8_t maxSiz);
     void transactionRequest(SpiTransParams& spiTransParams);
     void startTransaction();
     void markNotBusy() { _isBusy = false; }
@@ -45,6 +45,7 @@ private:
     void disableIrq();
     void enableIrq();
     bool _isBusy{false};
+    uint8_t _maxSize;   //maximum size of the queue
 };
 
 #endif /* INC_SPI_SUPERVISOR_H_ */

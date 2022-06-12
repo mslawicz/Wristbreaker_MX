@@ -37,7 +37,7 @@ void mainLoop()
     LOG_ALWAYS("Wristbreaker v1.0");
 
     GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
-    SpiSupervisor posSensSpiSupervisor(pPosSensSpi);
+    SpiSupervisor posSensSpiSupervisor(pPosSensSpi, 4);
     HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(posSensSpiSupervisor, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "aileron controller");   //aileron control haptic device
     aileronCtrl.hapticParam.type = HapticType::Spring;
     aileronCtrl.hapticParam.midPosition = 0.2F;
@@ -49,7 +49,7 @@ void mainLoop()
     aileronCtrl.hapticParam.gain = 3.8F;
     aileronCtrl.hapticParam.idleMagnitude = 0.12F;
 
-    I2cSupervisor posSensI2cSupervisor(pEncI2c);
+    I2cSupervisor posSensI2cSupervisor(pEncI2c, 4);
     PositionSensor* pTestPosSensor = new AS5600(posSensI2cSupervisor);
 
     Timer::start(pTimerHtim);

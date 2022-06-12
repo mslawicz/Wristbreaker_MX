@@ -10,8 +10,9 @@
 #include "main_loop_api.h"
 #include "logger.h"
 
-SpiSupervisor::SpiSupervisor(SPI_HandleTypeDef* pSpi) :
-    _pSpi(pSpi)
+SpiSupervisor::SpiSupervisor(SPI_HandleTypeDef* pSpi, uint8_t maxSize) :
+    _pSpi(pSpi),
+    _maxSize(maxSize)
 {
     spiSupervisorMap[pSpi] = this;
 }
@@ -19,7 +20,14 @@ SpiSupervisor::SpiSupervisor(SPI_HandleTypeDef* pSpi) :
 void SpiSupervisor::transactionRequest(SpiTransParams& spiTransParams)
 {
     disableIrq();
-    _spiRequestQueue.push(spiTransParams);
+    if(_spiRequestQueue.size() < _maxSize)
+    {
+        _spiRequestQueue.push(spiTransParams);
+    }
+    else
+    {
+        LOG_WARNING_ONCE("SPI supervisor queue size limit reached");
+    }
     if(!_isBusy)
     {
         //CS is not active - start transaction now

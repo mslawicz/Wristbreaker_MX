@@ -9,8 +9,9 @@
 #include "main_loop_api.h"
 #include "logger.h"
 
-I2cSupervisor::I2cSupervisor(I2C_HandleTypeDef* pI2c) :
-    _pI2c(pI2c)
+I2cSupervisor::I2cSupervisor(I2C_HandleTypeDef* pI2c, uint8_t maxSize) :
+    _pI2c(pI2c),
+    _maxSize(maxSize)
 {
     i2cSupervisorMap[pI2c] = this;
 }
@@ -18,12 +19,19 @@ I2cSupervisor::I2cSupervisor(I2C_HandleTypeDef* pI2c) :
 void I2cSupervisor::transactionRequest(I2cTransParams& i2cTransParams)
 {
     disableIrq();
-    _i2cRequestQueue.push(i2cTransParams);
-    enableIrq();
+    if(_i2cRequestQueue.size() < _maxSize)
+    {
+        _i2cRequestQueue.push(i2cTransParams);
+    }
+    else
+    {
+        LOG_WARNING_ONCE("I2C supervisor queue size limit reached");
+    }
     if(!_isBusy)
     {
         startTransaction();
     }
+    enableIrq();
 }
 
 void I2cSupervisor::startTransaction()
