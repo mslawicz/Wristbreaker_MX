@@ -18,6 +18,7 @@ extern ADC_HandleTypeDef* pHadc;    //pointer to ADC object
 extern uint16_t adcConvBuffer[MAX_ADC_CH]; //buffer for ADC conversion results
 extern SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus handle
 extern I2C_HandleTypeDef* pEncI2c;      //pointer to encoder I2C bus handle
+extern TIM_HandleTypeDef* pServoHtim;  //pointer to htim object instance used by servo under test
 
 #ifdef __cplusplus
 extern "C"

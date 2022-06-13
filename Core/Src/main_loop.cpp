@@ -26,7 +26,7 @@ uint16_t adcConvBuffer[MAX_ADC_CH]; //buffer for ADC conversion results
 TIM_HandleTypeDef* pMotor1Htim;  //pointer to htim object instance used by motor #1
 SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
 I2C_HandleTypeDef* pEncI2c;      //pointer to encoder I2C bus
-
+TIM_HandleTypeDef* pServoHtim;  //pointer to htim object instance used by servo under test
 
 void mainLoop()
 {
@@ -106,6 +106,9 @@ void mainLoop()
             gameController.sendReport();
             gameCtrlTimer.reset();
         }
+
+        //XXX test of servo PWM
+        pServoHtim->Instance->CCR1 = scale<uint16_t, uint32_t>(0, Max15Bit, gameController.data.dial, 9600, 48000);
     }
 }
 

@@ -90,6 +90,7 @@ int main(void)
     pHadc = &hadc1;         /*pointer to hadc1, which will be used in another module*/
     pPosSensSpi = &hspi4;
     pEncI2c = &hi2c1;       /*pointer to encoder I2C bus**/
+    pServoHtim = &htim3;    /*htim3 used by servo PWM*/
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
