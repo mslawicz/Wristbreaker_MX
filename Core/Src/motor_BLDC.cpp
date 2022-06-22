@@ -90,7 +90,8 @@ void MotorBLDC::initialize()
 bool MotorBLDC::calibrate(HapticParam& hapticParam)
 {
     //test of the motor spinning in open loop
-    _magnitude = hapticParam.gain;
+    _magnitude =
+            hapticParam.gain;
     _phase += 0.1F * hapticParam.referencePosition;
     setFieldVector(_phase, _magnitude);
     return false;
