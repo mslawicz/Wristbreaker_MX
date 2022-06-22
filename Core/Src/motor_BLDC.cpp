@@ -89,55 +89,10 @@ void MotorBLDC::initialize()
 
 bool MotorBLDC::calibrate(HapticParam& hapticParam)
 {
-    if((_magnitude >= hapticParam.calMagnitude) &&
-       (isInRange<float>(hapticParam.currentPosition, -hapticParam.calRange, hapticParam.calRange)))
-    {
-        //conditions for phase shift calculation are met
-        float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
-        float phaseShift = fmod(_phase - encoderPhase, FullCycle);
-        if(phaseShift < 0)
-        {
-            phaseShift += FullCycle;
-        }
-
-        _phaseShift += phaseShift;
-        _calSteps++;
-
-        if((_dirChanges >= hapticParam.CalDirChg) && (signbit(hapticParam.currentPosition - hapticParam.referencePosition) != _refDevSign))
-        {
-            //calibration is complete
-            _phaseShift /= _calSteps;   //mean value of all phase shift measurements
-            return true;    //calibration complete
-        }
-        _refDevSign = signbit(hapticParam.currentPosition - hapticParam.referencePosition);
-    }
-
+    //test of the motor spinning in open loop
+    _magnitude = hapticParam.gain;
+    _phase += 0.1F * hapticParam.referencePosition;
     setFieldVector(_phase, _magnitude);
-
-    bool lastDirSign = signbit(_dPhaseDir);
-    if(hapticParam.currentPosition > hapticParam.calRange)
-    {
-        _dPhaseDir = -1.0F;
-    }
-    if(hapticParam.currentPosition < -hapticParam.calRange)
-    {
-        _dPhaseDir = 1.0F;
-    }
-
-    if((signbit(_dPhaseDir) != lastDirSign) && (_calSteps != 0))
-    {
-        //change of direction during phase shift calculation procedure
-        _dirChanges++;
-    }
-
-    _phase += _dPhaseDir * hapticParam.calSpeed * _runTimer.getElapsedTime();
-    _magnitude += hapticParam.calMagnitude * Micro * _runTimer.getElapsedTime();     //magnitude being increased during the first second
-    if(_magnitude > hapticParam.calMagnitude)
-    {
-        _magnitude = hapticParam.calMagnitude;
-    }
-
-    _runTimer.reset();
     return false;
 }
 
