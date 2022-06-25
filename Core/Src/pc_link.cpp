@@ -8,7 +8,6 @@
 
 #include "pc_link.h"
 #include "convert.h"
-#include "usbd_custom_hid_if.h"
 #include <vector>
 
 void GameController::sendReport()
@@ -43,7 +42,7 @@ void GameController::sendReport()
         static_cast<uint8_t>((data.buttons >> 24) & 0xFF)
     };
 
-    USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportData.data(), reportData.size());
+    USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportData.data(), reportData.size());    //send vector content
 }
 
 void GameController::setTestData()
@@ -54,4 +53,16 @@ void GameController::setTestData()
     data.hat = (_testCounter >> 5) + 1;
     uint8_t pattern = 1 << (_testCounter >> 5);
     data.buttons = pattern | (pattern << 8) | (pattern << 16) | (pattern << 24);
+}
+
+void SimController::sendReport()
+{
+    std::vector<uint8_t> reportData
+    {
+        _ReportID,
+        'Y', 'o', 'k', 'e'
+    };
+
+    memcpy(usbdSendBuf, reportData.data(), reportData.size());  //copy vector content to send buffer
+    USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, usbdSendBuf, USBD_CUSTOMHID_OUTREPORT_BUF_SIZE);  //send entire buffer
 }

@@ -33,10 +33,12 @@ void mainLoop()
     constexpr uint32_t HeartbeatPeriod = 500000;
     Timer statusLedTimer;
     Timer gameCtrlTimer;
+    Timer simCtrlTimer;
 
     LOG_ALWAYS("Wristbreaker v1.0");
 
-    GameController gameController;  //USB link-to-PC object (class custom HID - game controller)
+    GameController gameController;  //USB link-to-PC object (class custom HID - joystick)
+    SimController simController;    //USB link-to-PC object (class custom HID - data buffer)
     SpiSupervisor posSensSpiSupervisor(pPosSensSpi, 4);
     HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(posSensSpiSupervisor, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "aileron controller");   //aileron control haptic device
     aileronCtrl.hapticParam.type = HapticType::Spring;
@@ -101,10 +103,22 @@ void mainLoop()
             HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
             statusLedTimer.reset();
         }
+
         if(gameCtrlTimer.hasElapsed(GameController::ReportInterval))
         {
             gameController.sendReport();
             gameCtrlTimer.reset();
+        }
+
+        if(simCtrlTimer.hasElapsed(SimController::ReportInterval))
+        {
+            simController.sendReport();
+            simCtrlTimer.reset();
+        }
+
+        if(simController.isNewDataReceived())
+        {
+            newDataReceived = 0;    //TODO add parsing sim data
         }
     }
 }

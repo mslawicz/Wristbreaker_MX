@@ -92,6 +92,9 @@ extern USBD_CUSTOM_HID_ItfTypeDef USBD_CustomHID_fops_FS;
 
 /* USER CODE BEGIN EXPORTED_VARIABLES */
 extern USBD_HandleTypeDef hUsbDeviceFS;
+extern uint8_t usbdRecBuf[];
+extern uint8_t usbdSendBuf[];
+extern uint8_t newDataReceived;
 /* USER CODE END EXPORTED_VARIABLES */
 
 /**

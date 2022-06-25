@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_custom_hid_if.h"
+#include "usbd_conf.h"
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -31,7 +32,9 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+uint8_t usbdRecBuf[USBD_CUSTOMHID_OUTREPORT_BUF_SIZE];
+uint8_t usbdSendBuf[USBD_CUSTOMHID_OUTREPORT_BUF_SIZE];
+uint8_t newDataReceived = 0;
 /* USER CODE END PV */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -187,7 +190,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 static int8_t CUSTOM_HID_Init_FS(void);
 static int8_t CUSTOM_HID_DeInit_FS(void);
-static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state);
+static int8_t CUSTOM_HID_OutEvent_FS(uint8_t* data);
 
 /**
   * @}
@@ -236,17 +239,18 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
   * @param  state: Event state
   * @retval USBD_OK if all operations are OK else USBD_FAIL
   */
-static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
+static int8_t CUSTOM_HID_OutEvent_FS(uint8_t* data)
 {
   /* USER CODE BEGIN 6 */
-  UNUSED(event_idx);
-  UNUSED(state);
 
   /* Start next USB packet transfer once data processing is completed */
   if (USBD_CUSTOM_HID_ReceivePacket(&hUsbDeviceFS) != (uint8_t)USBD_OK)
   {
     return -1;
   }
+
+  memcpy(usbdRecBuf, data, USBD_CUSTOMHID_OUTREPORT_BUF_SIZE);
+  newDataReceived = 1;
 
   return (USBD_OK);
   /* USER CODE END 6 */

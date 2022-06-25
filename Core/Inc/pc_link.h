@@ -9,6 +9,7 @@
 #define INC_PC_LINK_H_
 
 #include "stm32f4xx_hal.h"
+#include "usbd_custom_hid_if.h"
 
 //#define GAME_CONTROLLER_TEST
 
@@ -44,6 +45,16 @@ private:
     void setTestData();
     const uint8_t _ReportID = 1;
     uint8_t _testCounter{0};
+};
+
+class SimController
+{
+public:
+    void sendReport();
+    bool isNewDataReceived() const { return 0 != newDataReceived; }
+    static constexpr uint32_t ReportInterval = 23456U;    //simulator controller report sending interval
+private:
+    const uint8_t _ReportID = 2;
 };
 
 #endif /* INC_PC_LINK_H_ */
