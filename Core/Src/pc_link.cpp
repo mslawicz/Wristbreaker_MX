@@ -78,8 +78,6 @@ void SimController::parseSimData()
         return;
     }
 
-    _simData.flapPositions = parseData<uint8_t>(pData);
-    _simData.flapIndex = parseData<uint8_t>(pData);
     _simData.yokeXref = parseData<float>(pData);
     _simData.flags = parseData<uint32_t>(pData);
     _simData.normalizedSpeed = parseData<float>(pData);
@@ -87,6 +85,7 @@ void SimController::parseSimData()
     _simData.rotAccBodyY = parseData<float>(pData);
     _simData.rotAccBodyZ = parseData<float>(pData);
     _simData.engineType = parseData<uint8_t>(pData);
+    _simData.flapsPos = parseData<float>(pData);
 
     simOnline = getSimFlag(SimDataFlag::SimDataValid);
 }

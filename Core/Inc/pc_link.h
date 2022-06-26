@@ -37,8 +37,6 @@ struct GameControllerDataType
 
 struct SimDataType
 {
-    uint8_t flapPositions;
-    uint8_t flapIndex;
     float yokeXref;
     uint32_t flags;
     float normalizedSpeed;
@@ -46,6 +44,7 @@ struct SimDataType
     float rotAccBodyY;
     float rotAccBodyZ;
     uint8_t engineType;
+    float flapsPos;
 };
 
 class GameController
