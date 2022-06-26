@@ -45,6 +45,7 @@ struct SimDataType
     float rotAccBodyZ;
     uint8_t engineType;
     float flapsPos;
+    float propellerPct;
 };
 
 class GameController
