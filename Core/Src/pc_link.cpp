@@ -86,6 +86,7 @@ void SimController::parseSimData()
     _simData.rotAccBodyX = parseData<float>(pData);
     _simData.rotAccBodyY = parseData<float>(pData);
     _simData.rotAccBodyZ = parseData<float>(pData);
+    _simData.engineType = parseData<uint8_t>(pData);
 
     simOnline = getSimFlag(SimDataFlag::SimDataValid);
 }
