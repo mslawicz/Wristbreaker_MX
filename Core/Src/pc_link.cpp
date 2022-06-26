@@ -66,3 +66,26 @@ void SimController::sendReport()
     memcpy(usbdSendBuf, reportData.data(), reportData.size());  //copy vector content to send buffer
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, usbdSendBuf, USBD_CUSTOMHID_OUTREPORT_BUF_SIZE);  //send entire buffer
 }
+
+//parse new data received from simulator
+void SimController::parseSimData()
+{
+    newDataReceived = 0;    //mark the data has been already processed
+    uint8_t* pData = usbdRecBuf;
+    if(_ReportID != *pData++)
+    {
+        //wrong report - exit
+        return;
+    }
+
+    _simData.flapPositions = parseData<uint8_t>(pData);
+    _simData.flapIndex = parseData<uint8_t>(pData);
+    _simData.yokeXref = parseData<float>(pData);
+    _simData.flags = parseData<uint32_t>(pData);
+    _simData.normalizedSpeed = parseData<float>(pData);
+    _simData.rotAccBodyX = parseData<float>(pData);
+    _simData.rotAccBodyY = parseData<float>(pData);
+    _simData.rotAccBodyZ = parseData<float>(pData);
+
+    simOnline = getSimFlag(SimDataFlag::SimDataValid);
+}

@@ -44,4 +44,18 @@ template<typename T> bool isInRange(T value, T min, T max)
     return ((value >= min) && (value <= max));
 }
 
+template<typename T> void placeData(T data, uint8_t*& pBuffer)
+{
+    //memcpy(pBuffer, &variable, sizeof(T));
+    *reinterpret_cast<T*>(pBuffer) = data;
+    pBuffer += sizeof(T);
+}
+
+template<typename T> T parseData(uint8_t*& pBuffer)
+{
+    T data = *reinterpret_cast<T*>(pBuffer);
+    pBuffer += sizeof(T);
+    return data;
+}
+
 #endif /* INC_CONVERT_H_ */

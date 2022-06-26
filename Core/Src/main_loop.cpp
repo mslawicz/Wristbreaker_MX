@@ -34,8 +34,15 @@ void mainLoop()
     Timer statusLedTimer;
     Timer gameCtrlTimer;
     Timer simCtrlTimer;
+    Timer simOfflineTimer;
 
     LOG_ALWAYS("Wristbreaker v1.0");
+
+    //assign system LEDs
+    GPIO_TypeDef* heartbeatLedPort = LD1_GPIO_Port; //green LED
+    uint16_t heartbeatLedPin = LD1_Pin;
+    GPIO_TypeDef* simOnlineLedPort = LD2_GPIO_Port; //blue LED
+    uint16_t simOnlineLedPin = LD2_Pin;
 
     GameController gameController;  //USB link-to-PC object (class custom HID - joystick)
     SimController simController;    //USB link-to-PC object (class custom HID - data buffer)
@@ -59,6 +66,21 @@ void mainLoop()
     /* main forever loop */
     while(true)
     {
+        //check new data received from simulator
+        if(simController.isNewDataReceived())
+        {
+            simController.parseSimData();
+            if(simController.simOnline)
+            {
+                HAL_GPIO_WritePin(simOnlineLedPort, simOnlineLedPin, GPIO_PinState::GPIO_PIN_SET);
+                simOfflineTimer.reset();
+            }
+            else
+            {
+                HAL_GPIO_WritePin(simOnlineLedPort, simOnlineLedPin, GPIO_PinState::GPIO_PIN_RESET);
+            }
+        }
+
         aileronCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
         aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
         aileronCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
@@ -100,7 +122,7 @@ void mainLoop()
 
         if(statusLedTimer.hasElapsed(HeartbeatPeriod))
         {
-            HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+            HAL_GPIO_TogglePin(heartbeatLedPort, heartbeatLedPin);
             statusLedTimer.reset();
         }
 
@@ -116,9 +138,11 @@ void mainLoop()
             simCtrlTimer.reset();
         }
 
-        if(simController.isNewDataReceived())
+        //check time since the last valid data from simulator
+        if(simOfflineTimer.hasElapsed(SimController::OfflineTimout))
         {
-            newDataReceived = 0;    //TODO add parsing sim data
+            simController.simOnline = false;
+            HAL_GPIO_WritePin(simOnlineLedPort, simOnlineLedPin, GPIO_PinState::GPIO_PIN_RESET);
         }
     }
 }
