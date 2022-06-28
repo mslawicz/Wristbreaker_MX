@@ -39,13 +39,13 @@ struct SimDataType
 {
     float yokeXref;
     uint32_t flags;
-    float normalizedSpeed;
+    uint8_t normalizedSpeed;
     float rotAccBodyX;
     float rotAccBodyY;
     float rotAccBodyZ;
     uint8_t engineType;
-    float flapsPos;
-    float propellerPct;
+    uint8_t flapsPos;
+    uint8_t propellerPct;
 };
 
 class GameController
