@@ -47,7 +47,9 @@ void mainLoop()
     GameController gameController;  //USB link-to-PC object (class custom HID - joystick)
     SimController simController;    //USB link-to-PC object (class custom HID - data buffer)
     SpiSupervisor posSensSpiSupervisor(pPosSensSpi, 4);
-    HapticDevice aileronCtrl(new MotorBLDC(14, pMotor1Htim), new AS5048A(posSensSpiSupervisor, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "aileron controller");   //aileron control haptic device
+
+    //define aileron haptic device
+    HapticDevice aileronCtrl(nullptr, nullptr, "aileron controller");   //aileron control haptic device
     aileronCtrl.hapticParam.type = HapticType::Spring;
     aileronCtrl.hapticParam.midPosition = 0.2F;
     aileronCtrl.hapticParam.calMagnitude = 0.6F;
@@ -58,8 +60,17 @@ void mainLoop()
     aileronCtrl.hapticParam.gain = 3.8F;
     aileronCtrl.hapticParam.idleMagnitude = 0.12F;
 
-    I2cSupervisor posSensI2cSupervisor(pEncI2c, 4);
-    PositionSensor* pTestPosSensor = new AS5600(posSensI2cSupervisor);
+    //define elevator haptic device
+    HapticDevice elevatorCtrl(new MotorBLDC(7, pMotor1Htim), new AS5048A(posSensSpiSupervisor, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "elevator controller");   //elevator control haptic device
+    elevatorCtrl.hapticParam.type = HapticType::Spring;
+    elevatorCtrl.hapticParam.midPosition = 0.2F;
+    elevatorCtrl.hapticParam.calMagnitude = 0.4F;
+    elevatorCtrl.hapticParam.calSpeed = 0.001F;
+    elevatorCtrl.hapticParam.calRange = 0.2F;
+    elevatorCtrl.hapticParam.operRange = 0.4F;
+    elevatorCtrl.hapticParam.CalDirChg = 3;
+    elevatorCtrl.hapticParam.gain = 3.8F;
+    elevatorCtrl.hapticParam.idleMagnitude = 0.12F;
 
     Timer::start(pTimerHtim);
 
@@ -85,18 +96,13 @@ void mainLoop()
         aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
         aileronCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
 
-        HAL_GPIO_WritePin(TEST_OUT_GPIO_Port, TEST_OUT_Pin, GPIO_PinState::GPIO_PIN_SET);   //XXX test
-        auto pos = pTestPosSensor->getPosition();  //XXX test
-        (void)pos;
-        HAL_GPIO_WritePin(TEST_OUT_GPIO_Port, TEST_OUT_Pin, GPIO_PinState::GPIO_PIN_RESET);   //XXX test
-
         /* aileron control */
         aileronCtrl.handler();
         gameController.data.X = scale<float, int16_t>(-aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
 
         /* elevator control */
-        //elevatorCtrl.handler();
-        gameController.data.Y = scale<uint16_t, int16_t>(0, Max16Bit, 0 /*elevatorCtrl.param.currentPosition*/, -Max15Bit, Max15Bit);
+        elevatorCtrl.handler();
+        gameController.data.Y = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
 
         /* rudder control */
         //rudderCtrl.handler();
