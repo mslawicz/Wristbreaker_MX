@@ -46,6 +46,7 @@ struct SimDataType
     uint8_t engineType;
     uint8_t flapsPos;
     uint8_t propellerPct;
+    float elevatorTrim;
 };
 
 class GameController

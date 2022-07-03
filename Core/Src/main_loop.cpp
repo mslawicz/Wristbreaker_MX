@@ -81,7 +81,6 @@ void mainLoop()
 
         elevatorCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
         elevatorCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
-        elevatorCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
 
         /* aileron control */
         aileronCtrl.handler();
@@ -89,8 +88,11 @@ void mainLoop()
         monitor_position.X = gameController.data.X;
 
         /* elevator control */
+        float yokeRefY = simController.simOnline ? simController.getSimData().elevatorTrim : 0.0F; //<-1,1>
+        elevatorCtrl.hapticParam.referencePosition = scale<float, float>(-1.0F, 1.0F, yokeRefY, -elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange);    //<-oper,oper>
         elevatorCtrl.handler();
-        gameController.data.Y = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
+        float pilotInpY = elevatorCtrl.hapticParam.currentPosition - elevatorCtrl.hapticParam.referencePosition;    //<-oper,oper>
+        gameController.data.Y = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, pilotInpY, -Max15Bit, Max15Bit);
         monitor_position.Y = gameController.data.Y;
 
         /* rudder control */
