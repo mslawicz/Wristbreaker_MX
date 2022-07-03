@@ -10,7 +10,7 @@
 
 #include "stm32f4xx_hal.h"
 
-enum class HapticType : uint8_t
+enum HapticType : uint8_t
 {
     Spring
 };
@@ -20,6 +20,7 @@ enum class HapticType : uint8_t
  */
 struct HapticParam
 {
+    HapticType type;                //type of the haptic device
     float midPosition;              //mid position of the actuator <0,1>
     float referencePosition;        //reference position relative to mid position <-0.5,0.5>
     float encoderPosition;          //normalized position read from the encoder <0,1>
@@ -31,7 +32,6 @@ struct HapticParam
     float idleMagnitude;            //field vector magnitude in reference position
     float gain;                     //torque calculation gain
     uint8_t CalDirChg;              //number of calibration pass direction changes
-    HapticType type;                //type of the haptic device
 };
 
 #endif /* INC_HAPTIC_PARAM_H_ */

@@ -29,7 +29,7 @@ enum class HapticState : uint8_t
 class HapticDevice
 {
 public:
-    HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor, std::string name);
+    HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor, std::string name, HapticParam configuration);
     void handler();
     HapticParam hapticParam;
 private:

@@ -8,7 +8,8 @@
 #include "haptic.h"
 #include "logger.h"
 
-HapticDevice::HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor, std::string name) :
+HapticDevice::HapticDevice(Actuator* pActuator, PositionSensor* pPositionSensor, std::string name, HapticParam configuration) :
+    hapticParam(configuration),
     _pActuator(pActuator),
     _pPositionSensor(pPositionSensor),
     _name(name)

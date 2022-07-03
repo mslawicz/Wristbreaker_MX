@@ -17,6 +17,7 @@
 #include "constant.h"
 #include "logger.h"
 #include "spi_supervisor.h"
+#include "haptic_cfg.h"
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -53,28 +54,10 @@ void mainLoop()
     SpiSupervisor posSensSpiSupervisor(pPosSensSpi, 4);
 
     //define aileron haptic device
-    HapticDevice aileronCtrl(nullptr, nullptr, "aileron controller");   //aileron control haptic device
-    aileronCtrl.hapticParam.type = HapticType::Spring;
-    aileronCtrl.hapticParam.midPosition = 0.2F;
-    aileronCtrl.hapticParam.calMagnitude = 0.6F;
-    aileronCtrl.hapticParam.calSpeed = 0.001F;
-    aileronCtrl.hapticParam.calRange = 0.2F;
-    aileronCtrl.hapticParam.operRange = 0.4F;
-    aileronCtrl.hapticParam.CalDirChg = 3;
-    aileronCtrl.hapticParam.gain = 3.8F;
-    aileronCtrl.hapticParam.idleMagnitude = 0.12F;
+    HapticDevice aileronCtrl(nullptr, nullptr, "aileron controller", AileronCfg);   //aileron control haptic device
 
     //define elevator haptic device
-    HapticDevice elevatorCtrl(new MotorBLDC(7, pMotor1Htim), new AS5048A(posSensSpiSupervisor, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "elevator controller");   //elevator control haptic device
-    elevatorCtrl.hapticParam.type = HapticType::Spring;
-    elevatorCtrl.hapticParam.midPosition = 0.2F;
-    elevatorCtrl.hapticParam.calMagnitude = 0.4F;
-    elevatorCtrl.hapticParam.calSpeed = 0.0005F;
-    elevatorCtrl.hapticParam.calRange = 0.2F;
-    elevatorCtrl.hapticParam.operRange = 0.4F;
-    elevatorCtrl.hapticParam.CalDirChg = 3;
-    elevatorCtrl.hapticParam.gain = 4.5F;
-    elevatorCtrl.hapticParam.idleMagnitude = 0.06F;
+    HapticDevice elevatorCtrl(new MotorBLDC(7, pMotor1Htim), new AS5048A(posSensSpiSupervisor, ENC1_CS_GPIO_Port, ENC1_CS_Pin, true), "elevator controller", ElevatorCfg);   //elevator control haptic device
 
     Timer::start(pTimerHtim);
 
