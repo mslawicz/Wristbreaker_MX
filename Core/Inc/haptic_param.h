@@ -34,5 +34,4 @@ struct HapticParam
     HapticType type;                //type of the haptic device
 };
 
-
 #endif /* INC_HAPTIC_PARAM_H_ */

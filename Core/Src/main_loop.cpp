@@ -13,12 +13,10 @@
 #include "haptic.h"
 #include "convert.h"
 #include "AS5048A.h"
-#include "AS5600.h" //XXX test
 #include "motor_BLDC.h"
 #include "constant.h"
 #include "logger.h"
 #include "spi_supervisor.h"
-#include "i2c_supervisor.h" //XXX test
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -27,6 +25,12 @@ TIM_HandleTypeDef* pMotor1Htim;  //pointer to htim object instance used by motor
 SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
 I2C_HandleTypeDef* pEncI2c;      //pointer to encoder I2C bus
 
+struct floatXYZ
+{
+    int16_t X;
+    int16_t Y;
+    int16_t Z;
+} monitor_position;
 
 void mainLoop()
 {
@@ -65,12 +69,12 @@ void mainLoop()
     elevatorCtrl.hapticParam.type = HapticType::Spring;
     elevatorCtrl.hapticParam.midPosition = 0.2F;
     elevatorCtrl.hapticParam.calMagnitude = 0.4F;
-    elevatorCtrl.hapticParam.calSpeed = 0.001F;
+    elevatorCtrl.hapticParam.calSpeed = 0.0005F;
     elevatorCtrl.hapticParam.calRange = 0.2F;
     elevatorCtrl.hapticParam.operRange = 0.4F;
     elevatorCtrl.hapticParam.CalDirChg = 3;
-    elevatorCtrl.hapticParam.gain = 3.8F;
-    elevatorCtrl.hapticParam.idleMagnitude = 0.12F;
+    elevatorCtrl.hapticParam.gain = 4.5F;
+    elevatorCtrl.hapticParam.idleMagnitude = 0.06F;
 
     Timer::start(pTimerHtim);
 
@@ -92,21 +96,24 @@ void mainLoop()
             }
         }
 
-        aileronCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
-        aileronCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
-        aileronCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
+        elevatorCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
+        elevatorCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
+        elevatorCtrl.hapticParam.referencePosition = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], -0.2F, 0.2F);  //XXX test
 
         /* aileron control */
         aileronCtrl.handler();
         gameController.data.X = scale<float, int16_t>(-aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
+        monitor_position.X = gameController.data.X;
 
         /* elevator control */
         elevatorCtrl.handler();
         gameController.data.Y = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
+        monitor_position.Y = gameController.data.Y;
 
         /* rudder control */
         //rudderCtrl.handler();
         gameController.data.Rz = scale<uint16_t, int16_t>(0, Max16Bit, 0 /*rudderCtrl.param.currentPosition*/, -Max15Bit, Max15Bit);
+        monitor_position.Z = 0;
 
         /* throttle control */
         gameController.data.slider = scale<uint16_t, uint16_t>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, Max15Bit);
