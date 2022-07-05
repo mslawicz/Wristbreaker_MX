@@ -88,7 +88,7 @@ void SimController::parseSimData()
     _simData.flapsPos = parseData<uint8_t>(pData);
     _simData.propellerPct = parseData<uint8_t>(pData);
     _simData.elevatorTrim = parseData<float>(pData);
-
+    _simData.takeoffSpeedPct = parseData<uint8_t>(pData);
 
     simOnline = getSimFlag(SimDataFlag::SimDataValid);
 }
