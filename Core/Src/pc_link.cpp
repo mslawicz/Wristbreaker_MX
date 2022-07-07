@@ -8,7 +8,15 @@
 
 #include "pc_link.h"
 #include "convert.h"
+#include "monitor.h"
 #include <vector>
+
+#ifdef MONITOR
+    XYZ monitor_rotAccBody;
+    uint8_t monitor_wingSpeed;
+    uint8_t monitor_stabilizerSpeed;
+    uint8_t monitor_takeoffSpeedPct;
+#endif
 
 void GameController::sendReport()
 {
@@ -80,7 +88,7 @@ void SimController::parseSimData()
 
     _simData.yokeXref = parseData<float>(pData);
     _simData.flags = parseData<uint32_t>(pData);
-    _simData.normalizedSpeed = parseData<uint8_t>(pData);
+    _simData.wingSpeed = parseData<uint8_t>(pData);
     _simData.rotAccBodyX = parseData<float>(pData);
     _simData.rotAccBodyY = parseData<float>(pData);
     _simData.rotAccBodyZ = parseData<float>(pData);
@@ -88,7 +96,17 @@ void SimController::parseSimData()
     _simData.flapsPos = parseData<uint8_t>(pData);
     _simData.propellerPct = parseData<uint8_t>(pData);
     _simData.elevatorTrim = parseData<float>(pData);
+    _simData.stabilizerSpeed = parseData<uint8_t>(pData);
     _simData.takeoffSpeedPct = parseData<uint8_t>(pData);
 
     simOnline = getSimFlag(SimDataFlag::SimDataValid);
+
+#ifdef MONITOR
+    monitor_rotAccBody.X = scale<float, int16_t>(-100.0F, 100.0F, _simData.rotAccBodyX, -10000, 10000);
+    monitor_rotAccBody.Y = scale<float, int16_t>(-100.0F, 100.0F, _simData.rotAccBodyY, -10000, 10000);
+    monitor_rotAccBody.Z = scale<float, int16_t>(-100.0F, 100.0F, _simData.rotAccBodyZ, -10000, 10000);
+    monitor_wingSpeed = _simData.wingSpeed;
+    monitor_stabilizerSpeed = _simData.stabilizerSpeed;
+    monitor_takeoffSpeedPct = _simData.takeoffSpeedPct;
+#endif
 }

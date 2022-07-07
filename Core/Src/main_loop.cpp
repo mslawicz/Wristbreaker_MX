@@ -18,6 +18,7 @@
 #include "logger.h"
 #include "spi_supervisor.h"
 #include "haptic_cfg.h"
+#include "monitor.h"
 #include <iostream>
 
 ADC_HandleTypeDef* pHadc;    //pointer to ADC object
@@ -26,12 +27,9 @@ TIM_HandleTypeDef* pMotor1Htim;  //pointer to htim object instance used by motor
 SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
 I2C_HandleTypeDef* pEncI2c;      //pointer to encoder I2C bus
 
-struct floatXYZ
-{
-    int16_t X;
-    int16_t Y;
-    int16_t Z;
-} monitor_position;
+#ifdef MONITOR
+XYZ monitor_position;
+#endif
 
 void mainLoop()
 {
@@ -85,7 +83,6 @@ void mainLoop()
         /* aileron control */
         aileronCtrl.handler();
         gameController.data.X = scale<float, int16_t>(-aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
-        monitor_position.X = gameController.data.X;
 
         /* elevator control */
         float yokeRefY = simController.simOnline ? simController.getSimData().elevatorTrim : 0.0F; //<-1,1>
@@ -93,12 +90,16 @@ void mainLoop()
         elevatorCtrl.handler();
         float pilotInpY = elevatorCtrl.hapticParam.currentPosition - elevatorCtrl.hapticParam.referencePosition;    //<-oper,oper>
         gameController.data.Y = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, pilotInpY, -Max15Bit, Max15Bit);
-        monitor_position.Y = gameController.data.Y;
 
         /* rudder control */
         //rudderCtrl.handler();
         gameController.data.Rz = scale<uint16_t, int16_t>(0, Max16Bit, 0 /*rudderCtrl.param.currentPosition*/, -Max15Bit, Max15Bit);
+
+#ifdef MONITOR
+        monitor_position.X = gameController.data.X;
+        monitor_position.Y = gameController.data.Y;
         monitor_position.Z = 0;
+#endif
 
         /* throttle control */
         gameController.data.slider = scale<uint16_t, uint16_t>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, Max15Bit);

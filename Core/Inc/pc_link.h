@@ -39,7 +39,7 @@ struct SimDataType
 {
     float yokeXref;
     uint32_t flags;
-    uint8_t normalizedSpeed;
+    uint8_t wingSpeed;    //wing airspeed normalized to cruise speed <0,255>
     float rotAccBodyX;
     float rotAccBodyY;
     float rotAccBodyZ;
@@ -47,7 +47,8 @@ struct SimDataType
     uint8_t flapsPos;
     uint8_t propellerPct;
     float elevatorTrim;
-    uint8_t takeoffSpeedPct;
+    uint8_t stabilizerSpeed;    //stabilizer airspeed normalized to cruise speed <0,255> (windshield speed included)
+    uint8_t takeoffSpeedPct;    //stabilizer airspeed normalized to takeoff speed <0,255> (windshield speed included)
 };
 
 class GameController
