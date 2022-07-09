@@ -33,8 +33,8 @@ constexpr HapticParam ElevatorCfg =
 {
     .type = HapticType::Spring,
     .midPosition = 0.2F,
-    .calMagnitude = 0.4F,
-    .calSpeed = 0.0005F,
+    .calMagnitude = 0.5F,
+    .calSpeed = 0.0004F,
     .calRange = 0.2F,
     .operRange = 0.4F,
     .idleMagnitude = 0.06F,

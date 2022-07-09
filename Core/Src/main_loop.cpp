@@ -79,17 +79,26 @@ void mainLoop()
 
         elevatorCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
         elevatorCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
+        float yokeDynGain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], 0, 0.2F);    //XXX test
 
         /* aileron control */
         aileronCtrl.handler();
         gameController.data.X = scale<float, int16_t>(-aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
 
         /* elevator control */
-        float yokeRefY = simController.simOnline ? simController.getSimData().elevatorTrim : 0.0F; //<-1,1>
+        float yokeDynY = ((HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == GPIO_PinState::GPIO_PIN_SET) ? -1.0F : 1.0F) * yokeDynGain * simController.getSimData().rotAccBodyX;
+        float yokeRefY = simController.getSimData().elevatorTrim;
+        if(simController.getSimData().engineType == 0)
+        {
+            //this is a piston engine - simulate elevator weight
+            //elevator goes to trim position between 50 and 80 percent of takeoff speed
+            yokeRefY = scale<uint8_t, float>(128, 204, simController.getSimData().takeoffSpeedPct, -1.0F, yokeRefY);
+        }
+        yokeRefY = simController.simOnline ? (yokeRefY + yokeDynY) : 0.0F; //<-1,1>
         elevatorCtrl.hapticParam.referencePosition = scale<float, float>(-1.0F, 1.0F, yokeRefY, -elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange);    //<-oper,oper>
         elevatorCtrl.handler();
-        float pilotInpY = elevatorCtrl.hapticParam.currentPosition - elevatorCtrl.hapticParam.referencePosition;    //<-oper,oper>
-        gameController.data.Y = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, pilotInpY, -Max15Bit, Max15Bit);
+        float pilotInpY = scale<float, float>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.currentPosition, -1.0F, 1.0F) - simController.getSimData().elevatorTrim;  //<-1,1>
+        gameController.data.Y = scale<float, int16_t>(-1.0F, 1.0F, pilotInpY, -Max15Bit, Max15Bit); //<-32767,32767>
 
         /* rudder control */
         //rudderCtrl.handler();
