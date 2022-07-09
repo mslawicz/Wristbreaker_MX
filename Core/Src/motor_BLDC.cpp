@@ -103,13 +103,13 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
         _phaseShift += phaseShift;
         _calSteps++;
 
-        if((_dirChanges >= hapticParam.CalDirChg) && (signbit(hapticParam.currentPosition - hapticParam.referencePosition) != _refDevSign))
+        if(_dirChanges >= hapticParam.CalDirChg)
         {
             //calibration is complete
             _phaseShift /= _calSteps;   //mean value of all phase shift measurements
+            _currentRefPosition = hapticParam.currentPosition;
             return true;    //calibration complete
         }
-        _refDevSign = signbit(hapticParam.currentPosition - hapticParam.referencePosition);
     }
 
     setFieldVector(_phase, _magnitude);
@@ -149,7 +149,7 @@ void MotorBLDC::action(HapticParam& hapticParam)
     {
         g_motor[0] = hapticParam.encoderPosition;   //XXX test
         g_motor[1] = hapticParam.currentPosition;   //XXX test
-        float positionError = hapticParam.referencePosition - hapticParam.currentPosition;
+        float positionError = _currentRefPosition - hapticParam.currentPosition;
         g_motor[2] = positionError; //XXX test
 
         float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
@@ -172,4 +172,7 @@ void MotorBLDC::action(HapticParam& hapticParam)
         LOG_ERROR_ONCE("unknown type of a haptic device");
         break;
     }
+
+    auto refPosChange = limit<float>(hapticParam.referencePosition - _currentRefPosition, -hapticParam.refPosChangeLimit, hapticParam.refPosChangeLimit);
+    _currentRefPosition += refPosChange;
 }

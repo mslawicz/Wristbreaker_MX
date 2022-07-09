@@ -23,7 +23,9 @@ constexpr HapticParam AileronCfg =
     .operRange = 0.4F,
     .idleMagnitude = 0.12F,
     .gain = 3.8F,
-    .CalDirChg = 3
+    .CalDirChg = 3,
+    .refPosChangeLimit = 0.001F,
+    .effectGain = 0.13F
 };
 
 
@@ -37,9 +39,11 @@ constexpr HapticParam ElevatorCfg =
     .calSpeed = 0.0004F,
     .calRange = 0.2F,
     .operRange = 0.4F,
-    .idleMagnitude = 0.06F,
+    .idleMagnitude = 0.14F,
     .gain = 4.5F,
-    .CalDirChg = 3
+    .CalDirChg = 3,
+    .refPosChangeLimit = 0.001F,
+    .effectGain = 0.13F
 };
 
 

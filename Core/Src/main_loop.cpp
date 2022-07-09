@@ -79,14 +79,14 @@ void mainLoop()
 
         elevatorCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test
         elevatorCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test
-        float yokeDynGain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], 0, 0.2F);    //XXX test
+        elevatorCtrl.hapticParam.effectGain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], 0, 0.2F);    //XXX test
 
         /* aileron control */
         aileronCtrl.handler();
         gameController.data.X = scale<float, int16_t>(-aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.operRange, aileronCtrl.hapticParam.currentPosition, -Max15Bit, Max15Bit);
 
         /* elevator control */
-        float yokeDynY = ((HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == GPIO_PinState::GPIO_PIN_SET) ? -1.0F : 1.0F) * yokeDynGain * simController.getSimData().rotAccBodyX;
+        float yokeDynY = ((HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == GPIO_PinState::GPIO_PIN_SET) ? -1.0F : 1.0F) * elevatorCtrl.hapticParam.effectGain * simController.getSimData().rotAccBodyX;
         float yokeRefY = simController.getSimData().elevatorTrim;
         if(simController.getSimData().engineType == 0)
         {

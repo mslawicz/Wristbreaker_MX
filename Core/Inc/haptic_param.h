@@ -32,6 +32,8 @@ struct HapticParam
     float idleMagnitude;            //field vector magnitude in reference position
     float gain;                     //torque calculation gain
     uint8_t CalDirChg;              //number of calibration pass direction changes
+    float refPosChangeLimit;        //maximum change of reference position at a time
+    float effectGain;               //gain of force feedback dynamic effects
 };
 
 #endif /* INC_HAPTIC_PARAM_H_ */
