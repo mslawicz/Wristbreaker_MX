@@ -34,6 +34,7 @@ struct HapticParam
     uint8_t CalDirChg;              //number of calibration pass direction changes
     float refPosChangeLimit;        //maximum change of reference position at a time
     float effectGain;               //gain of force feedback dynamic effects
+    float currentRefPos;            //current reference position used for calculations
 };
 
 #endif /* INC_HAPTIC_PARAM_H_ */

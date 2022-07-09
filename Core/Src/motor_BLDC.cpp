@@ -107,7 +107,7 @@ bool MotorBLDC::calibrate(HapticParam& hapticParam)
         {
             //calibration is complete
             _phaseShift /= _calSteps;   //mean value of all phase shift measurements
-            _currentRefPosition = hapticParam.currentPosition;
+            hapticParam.currentRefPos = hapticParam.currentPosition;
             return true;    //calibration complete
         }
     }
@@ -149,7 +149,7 @@ void MotorBLDC::action(HapticParam& hapticParam)
     {
         g_motor[0] = hapticParam.encoderPosition;   //XXX test
         g_motor[1] = hapticParam.currentPosition;   //XXX test
-        float positionError = _currentRefPosition - hapticParam.currentPosition;
+        float positionError = hapticParam.currentRefPos - hapticParam.currentPosition;
         g_motor[2] = positionError; //XXX test
 
         float encoderPhase = fmod(static_cast<float>(hapticParam.encoderPosition * _polePairs * FullCycle), FullCycle);
@@ -173,6 +173,6 @@ void MotorBLDC::action(HapticParam& hapticParam)
         break;
     }
 
-    auto refPosChange = limit<float>(hapticParam.referencePosition - _currentRefPosition, -hapticParam.refPosChangeLimit, hapticParam.refPosChangeLimit);
-    _currentRefPosition += refPosChange;
+    auto refPosChange = limit<float>(hapticParam.referencePosition - hapticParam.currentRefPos, -hapticParam.refPosChangeLimit, hapticParam.refPosChangeLimit);
+    hapticParam.currentRefPos += refPosChange;
 }

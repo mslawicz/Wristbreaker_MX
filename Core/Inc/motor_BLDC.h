@@ -30,7 +30,6 @@ private:
     float _phaseShift{0};           //phase shift between motor phase and encoder phase
     uint32_t _calSteps{0};          //counter of calibration steps
     uint8_t _dirChanges{0};         //number of direction changes in calibration phase
-    float _currentRefPosition{0.0F};    //current reference position used in calculations
     TIM_HandleTypeDef* _pPwmHtim;   //pointer to PWM timer handle for this motor
     static constexpr size_t LutSize = 91;
     //Space Vector Modulation Look Up Table for angles 0-90 degrees
