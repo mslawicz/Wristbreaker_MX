@@ -28,7 +28,13 @@ SPI_HandleTypeDef* pPosSensSpi;  //pointer to position sensor SPI bus
 I2C_HandleTypeDef* pEncI2c;      //pointer to encoder I2C bus
 
 #ifdef MONITOR
-XYZ monitor_position;
+int16_t monitor_elevTrim;
+int16_t monitor_elevRotAcc;
+int16_t monitor_yokeDynY;
+int16_t monitor_yokeRefY;
+int16_t monitor_elevCurPos;
+int16_t monitor_elevCurRef;
+int16_t monitor_pilotInpY;
 #endif
 
 void mainLoop()
@@ -78,8 +84,9 @@ void mainLoop()
         }
 
         elevatorCtrl.hapticParam.gain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::throttle], 0, 10.0F);    //XXX test    4.4
-        elevatorCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test 0.14
-        elevatorCtrl.hapticParam.effectGain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], 0, 0.2F);    //XXX test    0.13
+        //elevatorCtrl.hapticParam.idleMagnitude = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.5F);  //XXX test 0.14
+        elevatorCtrl.hapticParam.refPosChangeLimit = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::propeller], 0, 0.00005F);  //XXX test
+        elevatorCtrl.hapticParam.effectGain = scale<uint16_t, float>(0, Max12Bit, adcConvBuffer[AdcCh::mixture], 0, 0.5F);    //XXX test    0.13
 
         /* aileron control */
         aileronCtrl.handler();
@@ -105,9 +112,13 @@ void mainLoop()
         gameController.data.Rz = scale<uint16_t, int16_t>(0, Max16Bit, 0 /*rudderCtrl.param.currentPosition*/, -Max15Bit, Max15Bit);
 
 #ifdef MONITOR
-        monitor_position.X = gameController.data.X;
-        monitor_position.Y = gameController.data.Y;
-        monitor_position.Z = 0;
+        monitor_elevTrim = scale<float, int16_t>(-1.0F, 1.0F, simController.getSimData().elevatorTrim, -1000, 1000);
+        monitor_elevRotAcc = scale<float, int16_t>(-10.0F, 10.0F, simController.getSimData().rotAccBodyX, -10000, 10000);
+        monitor_yokeDynY = scale<float, int16_t>(-10.0F, 10.0F, yokeDynY, -10000, 10000);
+        monitor_yokeRefY = scale<float, int16_t>(-1.0F, 1.0F, yokeRefY, -1000, 1000);
+        monitor_elevCurPos  = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.currentPosition, -1000, 1000);
+        monitor_elevCurRef = scale<float, int16_t>(-elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.operRange, elevatorCtrl.hapticParam.currentRefPos, -1000, 1000);
+        monitor_pilotInpY = scale<float, int16_t>(-1.0F, 1.0F, pilotInpY, -1000, 1000);
 #endif
 
         /* throttle control */
